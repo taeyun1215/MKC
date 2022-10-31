@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/instagram
+    username: root
+    password: taeyun1215
+  profiles.active: dev
+  web:
+    resources:
+      static-locations: classpath:/static, classpath:/frontend # ??? ?????
+
+logging:
+  level:
+    org.springframework: debug
+    web: debug
