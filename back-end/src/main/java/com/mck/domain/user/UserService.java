@@ -10,6 +10,7 @@ public interface UserService {
     // DB에 유저 저장.
     User signup(UserSignupDto userRequestDto);
 
-    // DB에 유저 저장.
+    // 로그인 하기.
     User login(UserSignupDto userRequestDto);
+
 }

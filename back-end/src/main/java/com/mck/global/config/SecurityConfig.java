@@ -1,4 +1,4 @@
-package com.mck.config;
+package com.mck.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

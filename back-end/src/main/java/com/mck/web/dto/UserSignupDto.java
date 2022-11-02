@@ -1,6 +1,7 @@
 package com.mck.web.dto;
 
 import com.mck.domain.user.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,6 +10,7 @@ import javax.validation.constraints.*;
 
 @Getter
 @Setter
+@AllArgsConstructor // 테스트 코드 작성용
 public class UserSignupDto {
 
     @Email
