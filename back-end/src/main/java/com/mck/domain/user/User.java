@@ -4,10 +4,7 @@ import com.mck.domain.base.BaseEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.validation.constraints.Email;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Entity
 @Builder
@@ -20,24 +17,31 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", unique = true, nullable = false)
+    @Column(name = "user_id")
     private long userId;
 
-    @Email
-    @NotBlank(message = "이메일 형식을 맞춰주세요.")
+    @Column(
+            length = 50,
+            nullable = false,
+            unique = true
+    )
     private String email;
 
-    @Column(length = 100, nullable = false)
-    @Pattern(
-            regexp = "/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/",
-            message = "비밀번호는 최소 8자 이상, 하나 이상의 영문, 숫자, 특수문자가 포함되어야 합니다."
+    @Column(
+            length = 200,
+            nullable = false
     )
     private String password;
 
-    @Column(length = 40, nullable = false)
-    @Pattern(
-            regexp = "/^\\d{3}-\\d{3,4}-\\d{4}$/",
-            message = "핸드폰 번호 형식을 맞춰주세요."
+    @Column(
+            length = 100,
+            nullable = false
+    )
+    private String name;
+
+    @Column(
+            length = 40,
+            nullable = false
     )
     private String phone;
 
