@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 외부에서의 생성을 열어 둘 필요가 없을 때 보안상 권장함.
+@Table(name = "comment")
 @Getter
 public class Comment extends BaseEntity {
 
@@ -30,8 +31,8 @@ public class Comment extends BaseEntity {
             targetEntity = User.class,
             fetch = FetchType.LAZY
     )
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user_name")
+    private String writer;
 
     @ManyToOne(
             targetEntity = Post.class,
@@ -39,5 +40,4 @@ public class Comment extends BaseEntity {
     )
     @JoinColumn(name = "post_id")
     private Post post;
-
 }

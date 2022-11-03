@@ -27,12 +27,6 @@ public class PostController {
 
     private final PostService postService;
 
-//    게시글 전체 조회
-//    @GetMapping("/all")
-//    public ResponseEntity<Post> postAll() {
-//
-//    }
-
     // 게시글 추가
     @PostMapping("/new")
     public ResponseEntity<Post> postAdd(
@@ -45,12 +39,13 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String userEmail = userDetailsService.getUsername();
+        String userId = userDetailsService.getUsername();
 
         try {
-            Post savePost = postService.
+            postService.registerPost(postDto, userId);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (BusinessException e) {
-            bindingResult.reject();
+            bindingResult.reject("notSavedPost", ErrorCode.NOT_SAVE_POST.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

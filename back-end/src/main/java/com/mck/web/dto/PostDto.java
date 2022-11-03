@@ -21,14 +21,11 @@ public class PostDto {
 
     private String writer;
 
-    private User user;
-
     public Post toEntity(User user) {
         return Post.builder()
                 .title(title)
                 .content(content)
-                .writer(user.getName())
-                .user(user)
+                .writer(user.getNickname())
                 .build();
     }
 }

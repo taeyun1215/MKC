@@ -8,5 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public interface PostService {
     // DB에 글 저장.
-    Post registerPost(PostDto postDto, String userEmail);
+    Post registerPost(PostDto postDto, String userId);
 }

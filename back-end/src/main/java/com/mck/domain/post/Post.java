@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 외부에서의 생성을 열어 둘 필요가 없을 때 보안상 권장함.
+@Table(name = "post")
 @Getter
 public class Post extends BaseEntity {
 
@@ -33,19 +34,13 @@ public class Post extends BaseEntity {
     )
     private String content;
 
-    @Column(
-            length = 500,
-            nullable = false
-    )
-    private String writer;
-
     @ManyToOne(
             targetEntity = User.class,
             fetch = FetchType.LAZY
     ) // 실제로 요청하는 순간 가져오기 위해 LAZY로 사용함.
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user_name")
+    private String writer;
 
     @OneToMany
-    private List<Comment> commentList = new ArrayList<>();
+    private List<Comment> commentList;
 }

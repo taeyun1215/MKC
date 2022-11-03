@@ -4,6 +4,7 @@ import com.mck.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.*;
@@ -13,13 +14,13 @@ import javax.validation.constraints.*;
 @AllArgsConstructor // 테스트 코드 작성용
 public class UserSignupDto {
 
-    @Email
-    @NotNull(message = "이메일은 필수 입력 값입니다.")
-    private String email;
+    @Size(min = 5, max = 15, message = "아이디는 최소 5자 이상 15자 이하입니다.")
+    @NotBlank(message = "아이디는 필수 입력 값입니다.")
+    private String userName;
 
     @Size(min = 8, max = 16)
     @Pattern(
-            regexp = "/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/",
+            regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}",
             message = "비밀번호는 최소 8자 이상 16자 이하, 하나 이상의 영문, 숫자, 특수문자가 포함되어야 합니다."
     )
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
@@ -27,22 +28,20 @@ public class UserSignupDto {
 
     private String confirmPassword;
 
-    @Size(max = 8, message = "이름은 8자 이하로 입력해주세요.")
-    @NotBlank(message = "이름은 필수 입력 값입니다.")
-    private String name;
+    @Email(message = "이메일 형식에 맞춰주세요.")
+    @NotNull(message = "이메일은 필수 입력 값입니다.")
+    private String email;
 
-    @Pattern(
-            regexp = "/^\\d{3}-\\d{3,4}-\\d{4}$/",
-            message = "핸드폰 번호 형식을 맞춰주세요."
-    )
-    private String phone;
+    @Size(max = 12, message = "닉네임은 12자 이하로 입력해주세요.")
+    @NotBlank(message = "닉네임은 필수 입력 값입니다.")
+    private String nickname;
 
     public User toEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
+                .userName(userName)
                 .email(email)
                 .password(passwordEncoder.encode(password))
-                .name(name)
-                .phone(phone)
+                .nickname(nickname)
                 .build();
     }
 
