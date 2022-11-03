@@ -1,56 +1,64 @@
 package com.mck.web.api;
 
-import com.mck.domain.user.User;
-import com.mck.domain.user.UserService;
+import com.mck.domain.post.Post;
+import com.mck.domain.post.PostService;
 import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
-import com.mck.web.dto.UserSignupDto;
-
+import com.mck.global.service.UserDetailsService;
+import com.mck.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.thymeleaf.util.StringUtils;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/post")
 @Slf4j
-public class UserController {
+public class PostController {
 
-    private final UserService userService;
+    private final PostService postService;
 
-    // 유저 등록
-    @PostMapping("/signup")
-    public ResponseEntity<User> signup (
-            @Validated @ModelAttribute("userSignupDto") UserSignupDto userSignupDto,
-            BindingResult bindingResult
+//    게시글 전체 조회
+//    @GetMapping("/all")
+//    public ResponseEntity<Post> postAll() {
+//
+//    }
+
+    // 게시글 추가
+    @PostMapping("/new")
+    public ResponseEntity<Post> postAdd(
+            @Validated @ModelAttribute("postDto") PostDto postDto,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetailsService userDetailsService
     ) {
         if (bindingResult.hasErrors()) {
             bindingResult.reject("mismatchedFormat", ErrorCode.MISMATCHED_FORMAT.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else if (!StringUtils.equals(
-                userSignupDto.getPassword(),
-                userSignupDto.getConfirmPassword()
-        )) {
-            bindingResult.reject("mismatchedPassword", ErrorCode.MISMATCHED_PASSWORD.getMessage());
+        }
+
+        String userEmail = userDetailsService.getUsername();
+
+        try {
+            Post savePost = postService.
+        } catch (BusinessException e) {
+            bindingResult.reject();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            userService.signup(userSignupDto);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (BusinessException e) {
-            bindingResult.reject("alreadyMember", ErrorCode.ALREADY_REGISTERED_MEMBER.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
+
+
+
+
+
 
 }

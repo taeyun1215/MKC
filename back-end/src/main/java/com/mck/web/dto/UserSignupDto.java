@@ -27,8 +27,8 @@ public class UserSignupDto {
 
     private String confirmPassword;
 
+    @Size(max = 8, message = "이름은 8자 이하로 입력해주세요.")
     @NotBlank(message = "이름은 필수 입력 값입니다.")
-    @Size(max = 20, message = "이름은 8자 이하로 입력해주세요.")
     private String name;
 
     @Pattern(
