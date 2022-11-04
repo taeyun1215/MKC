@@ -12,12 +12,12 @@
 
 
 ### 사용 기술 스택
-- Java 11
+- Java
 - Spring Boot
 - MariaDB
--
--
-- aws
+- React
+- Next.js
+- AWS
 
 ### 아키텍처
 
