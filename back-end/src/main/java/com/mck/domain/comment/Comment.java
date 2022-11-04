@@ -25,14 +25,20 @@ public class Comment extends BaseEntity {
             length = 500,
             nullable = false
     )
-    private String comment;
+    private String comment; // 코멘트
+
+    @Column(
+            length = 100,
+            nullable = false
+    )
+    private String writer; // 작성
 
     @ManyToOne(
             targetEntity = User.class,
             fetch = FetchType.LAZY
-    )
-    @JoinColumn(name = "user_name")
-    private String writer;
+    ) // 실제로 요청하는 순간 가져오기 위해 LAZY로 사용함.
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(
             targetEntity = Post.class,

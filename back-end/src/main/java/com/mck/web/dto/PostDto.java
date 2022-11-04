@@ -26,6 +26,7 @@ public class PostDto {
                 .title(title)
                 .content(content)
                 .writer(user.getNickname())
+                .user(user)
                 .build();
     }
 }
