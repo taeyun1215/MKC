@@ -7,10 +7,14 @@ spring:
     url: jdbc:mariadb://localhost:3306/mck
     username: root
     password: taeyun1215
-  profiles.active: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+  profiles:
+    active: dev
   web:
     resources:
-      static-locations: classpath:/static, classpath:/frontend # ??? ?????
+      static-locations: classpath:/static, classpath:/frontend
 
 logging:
   level:

@@ -2,43 +2,47 @@ package com.mck.domain.user;
 
 import com.mck.domain.base.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.validation.constraints.Email;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 외부에서의 생성을 열어 둘 필요가 없을 때 보안상 권장함.
+@Table(name = "users")
 @Getter
-@DynamicUpdate // 특정 컬럼만 업데이트 해주기 위함.
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", unique = true, nullable = false)
-    private long userId;
+    @GeneratedValue(strategy = GenerationType.AUTO) // IDENTITY에서 바꾼 이유 : DB에서 삭제해도 계속해서 PK값이 증가함.
+    @Column(name = "user_id")
+    private Long userId; // 고유값
 
-    @Email
-    @NotBlank(message = "이메일 형식을 맞춰주세요.")
-    private String email;
-
-    @Column(length = 100, nullable = false)
-    @Pattern(
-            regexp = "/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/",
-            message = "비밀번호는 최소 8자 이상, 하나 이상의 영문, 숫자, 특수문자가 포함되어야 합니다."
+    @Column(
+            length = 50,
+            nullable = false,
+            unique = true,
+            name = "user_name"
     )
-    private String password;
+    private String userName; // 아이디, 중복체크
 
-    @Column(length = 40, nullable = false)
-    @Pattern(
-            regexp = "/^\\d{3}-\\d{3,4}-\\d{4}$/",
-            message = "핸드폰 번호 형식을 맞춰주세요."
+    @Column(
+            length = 200,
+            nullable = false
     )
-    private String phone;
+    private String password; // 비밀번호
+
+    @Column(
+            length = 50,
+            nullable = false,
+            unique = true
+    )
+    private String email; // 이메일, 중복체크
+
+    @Column(
+            length = 100,
+            nullable = false,
+            unique = true
+    )
+    private String nickname; // 닉네임, 중복체크
 
 }

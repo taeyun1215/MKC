@@ -1,10 +1,16 @@
-package com.mck.config;
+package com.mck.global.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+@RequiredArgsConstructor
+@EnableWebSecurity
+@Configuration
 public class SecurityConfig {
 
     @Bean
@@ -18,7 +24,7 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeRequests()
-                .antMatchers().permitAll()
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .formLogin()
