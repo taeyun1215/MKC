@@ -28,8 +28,8 @@ public class UserServiceTest {
         // given
         UserSignupDto user = new UserSignupDto(
                     "devty1215",
-                    "woogi101",
-                    "woogi101",
+                    "qwer123!@#",
+                    "qwer123!@#",
                     "taeyun1215@naver.com",
                     "gp_dted"
                 );
