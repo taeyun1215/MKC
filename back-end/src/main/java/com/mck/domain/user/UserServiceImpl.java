@@ -2,6 +2,8 @@ package com.mck.domain.user;
 
 import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
+import com.mck.web.dto.UserEditDto;
+import com.mck.web.dto.UserLoginDto;
 import com.mck.web.dto.UserSignupDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +31,14 @@ public class UserServiceImpl implements UserService {
     }
 
     public void validateUserSignupDto(UserSignupDto userSignupDto) {
-        Optional<User> findUser = userRepository.findByEmail(userSignupDto.getEmail());
+        Optional<User> findUserEmail = userRepository.findByEmail(userSignupDto.getEmail());
+        Optional<User> findUserNickname = userRepository.findByNickname(userSignupDto.getUserName());
 
-        if (findUser == null) {
+        if (findUserEmail == null) {
             throw new BusinessException(ErrorCode.ALREADY_REGISTERED_MEMBER);
+        }
+        if (findUserNickname == null) {
+            throw new BusinessException(ErrorCode.ALREADY_EXIST_NICKNAME);
         }
 
         // todo : goldenplanet 메일이 아니면 가입이 안 되게하기.
@@ -40,7 +46,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User login(UserSignupDto userRequestDto) {
+    public User login(UserLoginDto userLoginDto) {
         return null;
     }
+
+    @Override
+    @Transactional
+    public User editUser(UserEditDto userEditDto, User user) {
+        validateUserEditDto(userEditDto);
+        // todo : user 업데이트 하기.
+        return userRepository.save(user);
+    }
+
+    public void validateUserEditDto(UserEditDto userEditDto) {
+        Optional<User> findUserNickname = userRepository.findByNickname(userEditDto.getNewNickname());
+
+        if (findUserNickname == null) {
+            throw new BusinessException(ErrorCode.ALREADY_EXIST_NICKNAME);
+        }
+    }
+
 }

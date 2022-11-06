@@ -4,7 +4,6 @@ import com.mck.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.*;
@@ -26,6 +25,12 @@ public class UserSignupDto {
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     private String password;
 
+    @Size(min = 8, max = 16)
+    @Pattern(
+            regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}",
+            message = "비밀번호는 최소 8자 이상 16자 이하, 하나 이상의 영문, 숫자, 특수문자가 포함되어야 합니다."
+    )
+    @NotBlank(message = "비밀번호확인은 필수 입력 값입니다.")
     private String confirmPassword;
 
     @Email(message = "이메일 형식에 맞춰주세요.")

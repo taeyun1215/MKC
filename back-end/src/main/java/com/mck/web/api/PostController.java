@@ -39,7 +39,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String userId = userDetailsService.getUsername();
+        String userId = userDetailsService.getUsername(); // todo : userDetailsService을 @data 받았기에 이제는 getUser로 받을수 있음.
 
         try {
             postService.registerPost(postDto, userId);
