@@ -3,6 +3,7 @@ package com.mck.user;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepository;
 import com.mck.domain.user.UserService;
+import com.mck.web.dto.UserEditDto;
 import com.mck.web.dto.UserSignupDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -40,5 +41,46 @@ public class UserServiceTest {
         // then
         Optional<User> findUser = userRepository.findByEmail("taeyun1215@naver.com");
         Assertions.assertEquals(saveUser, findUser.get());
+    }
+
+    @Test
+    @DisplayName("로그인 테스트")
+    void login() {
+        // given
+
+        // when
+
+        // then
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 테스트")
+    void editUser() {
+        // given
+        UserSignupDto userSignupDto = new UserSignupDto(
+                "devty1215",
+                "qwer123!@#",
+                "qwer123!@#",
+                "taeyun1215@naver.com",
+                "gp_dted"
+        );
+
+        User saveUser = userService.signup(userSignupDto);
+
+        UserEditDto userEditDto = new UserEditDto(
+                "devty1215",
+                "qwer123!@#",
+                "222qqqq@@@@",
+                "222qqqq@@@@",
+                "gp_dted",
+                "tytytyty"
+        );
+
+        // when
+        User editUser = userService.editUser(userEditDto, saveUser);
+
+        // then
+        Optional<User> findUser = userRepository.findByUserName("devty1215");
+        Assertions.assertEquals(editUser.getNickname(), findUser.get().getNickname());
     }
 }

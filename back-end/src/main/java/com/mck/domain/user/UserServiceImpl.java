@@ -54,8 +54,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User editUser(UserEditDto userEditDto, User user) {
         validateUserEditDto(userEditDto);
-        // todo : user 업데이트 하기.
-        return userRepository.save(user);
+
+        return userRepository.editUser(
+                userEditDto.getNewNickname(),
+                userEditDto.getNewPassword(),
+                user.getUserId()
+        );
     }
 
     public void validateUserEditDto(UserEditDto userEditDto) {
