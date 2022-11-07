@@ -1,13 +1,10 @@
 package com.mck.domain.post;
 
 import com.mck.domain.base.BaseEntity;
-import com.mck.domain.comment.Comment;
 import com.mck.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Builder

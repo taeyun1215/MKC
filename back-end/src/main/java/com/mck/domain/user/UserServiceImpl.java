@@ -54,12 +54,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User editUser(UserEditDto userEditDto, User user) {
         validateUserEditDto(userEditDto);
-
-        return userRepository.editUser(
+        userRepository.editUser(
                 userEditDto.getNewNickname(),
                 userEditDto.getNewPassword(),
                 user.getUserId()
         );
+
+        return user;
     }
 
     public void validateUserEditDto(UserEditDto userEditDto) {
@@ -68,6 +69,13 @@ public class UserServiceImpl implements UserService {
         if (findUserNickname == null) {
             throw new BusinessException(ErrorCode.ALREADY_EXIST_NICKNAME);
         }
+    }
+
+    @Override
+    @Transactional
+    public User deleteUser(User user) {
+        userRepository.deleteUser(user.getUserId());
+        return user;
     }
 
 }

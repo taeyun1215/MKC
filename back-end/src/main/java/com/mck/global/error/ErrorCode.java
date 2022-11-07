@@ -16,8 +16,8 @@ public enum ErrorCode {
     NOT_SAVE_POST(400, "글이 저장되지 않았습니다."),
 
     // 수정
-    MISMATCHED_EXIST_PASSWORD_AND_ENTER_PASSWORD(401, "입력한 비밀번호가 기존 비밀번호와 일치하지 않습니다."),
-    MISMATCHED_EXIST_NICKNAME_AND_ENTER_NICKNAME(401, "입력한 닉네임이 기존 닉네임이 일치하지 않습니다.");
+    MISMATCHED_ENTER_PASSWORD(401, "입력한 비밀번호가 기존 비밀번호와 일치하지 않습니다."),
+    MISMATCHED_ENTER_NICKNAME(401, "입력한 닉네임이 기존 닉네임이 일치하지 않습니다.");
 
     ErrorCode(int status, String message) {
         this.status = status;

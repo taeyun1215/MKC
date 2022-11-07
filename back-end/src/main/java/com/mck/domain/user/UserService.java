@@ -14,10 +14,13 @@ public interface UserService {
     // DB에 유저 저장.
     User signup(UserSignupDto userRequestDto);
 
-    // 로그인 하기.
+    // 로그인.
     User login(UserLoginDto userLoginDto);
 
-    // 로그인 하기.
+    // 유저 정보 수정.
     User editUser(UserEditDto userEditDto, User user);
+
+    // 유저 정보 삭제.
+    User deleteUser(User user);
 
 }
