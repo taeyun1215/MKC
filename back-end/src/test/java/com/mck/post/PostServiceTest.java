@@ -48,7 +48,7 @@ public class PostServiceTest {
         );
 
         // when
-        Post savePost = postService.registerPost(postDto, saveUser.getUserName()); // 여기서 유저 정보를 찾기에 위해서 DB에 저장해줘야함.
+        Post savePost = postService.registerPost(postDto, saveUser); // 여기서 유저 정보를 찾기에 위해서 DB에 저장해줘야함.
 
         // then
         Optional<Post> findPost = postRepository.findByTitle("제목입니다.");

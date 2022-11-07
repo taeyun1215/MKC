@@ -22,12 +22,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post registerPost(PostDto postDto, String userName) {
+    public Post registerPost(PostDto postDto, User user) {
 
-        User user = userRepository.findByUserName(userName)
+        User findUser = userRepository.findByUserId(user.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        Post post = postDto.toEntity(user);
+        Post post = postDto.toEntity(findUser);
 
         return postRepository.save(post);
     }

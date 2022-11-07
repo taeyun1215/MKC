@@ -2,6 +2,7 @@ package com.mck.web.api;
 
 import com.mck.domain.post.Post;
 import com.mck.domain.post.PostService;
+import com.mck.domain.user.User;
 import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
 import com.mck.global.service.UserDetailsService;
@@ -39,10 +40,10 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String userId = userDetailsService.getUsername(); // todo : userDetailsService을 @data 받았기에 이제는 getUser로 받을수 있음.
+        User user = userDetailsService.getUser();
 
         try {
-            postService.registerPost(postDto, userId);
+            postService.registerPost(postDto, user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (BusinessException e) {
             bindingResult.reject("notSavedPost", ErrorCode.NOT_SAVE_POST.getMessage());

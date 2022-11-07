@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @SpringBootTest
- @Transactional  // 테스트는 여러번 반복해서 실행해야 하므로 DB에 반영이 안 되게 하기 위해서 사용함.
+@Transactional  // 테스트는 여러번 반복해서 실행해야 하므로 DB에 반영이 안 되게 하기 위해서 사용함.
 public class UserServiceTest {
 
     @Autowired
@@ -106,7 +106,7 @@ public class UserServiceTest {
 
         // then
         Optional<User> deleteUser = userRepository.findByUserId(saveUser.getUserId());
-        Assertions.assertEquals(deleteUser, null);
+        Assertions.assertEquals(deleteUser.isPresent(), false);
     }
 
 }
