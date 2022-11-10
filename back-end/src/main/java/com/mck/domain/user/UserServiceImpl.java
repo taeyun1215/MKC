@@ -2,9 +2,9 @@ package com.mck.domain.user;
 
 import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
-import com.mck.web.dto.UserEditDto;
-import com.mck.web.dto.UserLoginDto;
-import com.mck.web.dto.UserSignupDto;
+import com.mck.domain.user.dto.UserEditDto;
+import com.mck.domain.user.dto.UserLoginDto;
+import com.mck.domain.user.dto.UserSignupDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

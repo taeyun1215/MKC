@@ -1,12 +1,10 @@
 package com.mck.domain.user;
 
-import com.mck.web.dto.UserEditDto;
-import com.mck.web.dto.UserLoginDto;
-import com.mck.web.dto.UserSignupDto;
+import com.mck.domain.user.dto.UserEditDto;
+import com.mck.domain.user.dto.UserLoginDto;
+import com.mck.domain.user.dto.UserSignupDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

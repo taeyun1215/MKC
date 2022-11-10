@@ -5,8 +5,8 @@ import com.mck.domain.post.PostRepository;
 import com.mck.domain.post.PostService;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
-import com.mck.web.dto.PostDto;
-import com.mck.web.dto.UserSignupDto;
+import com.mck.domain.post.dto.PostDto;
+import com.mck.domain.user.dto.UserSignupDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @SpringBootTest
-@Transactional  // 테스트는 여러번 반복해서 실행해야 하므로 DB에 반영이 안 되게 하기 위해서 사용함.
+//@Transactional  // 테스트는 여러번 반복해서 실행해야 하므로 DB에 반영이 안 되게 하기 위해서 사용함.
 public class PostServiceTest {
 
     @Autowired
@@ -43,8 +43,7 @@ public class PostServiceTest {
 
         PostDto postDto = new PostDto(
                 "제목입니다.",
-                "내용입니다.",
-                user.getNickname()
+                "내용입니다."
         );
 
         // when
@@ -53,6 +52,40 @@ public class PostServiceTest {
         // then
         Optional<Post> findPost = postRepository.findByTitle("제목입니다.");
         Assertions.assertEquals(savePost, findPost.get());
+    }
+
+    @Test
+    @DisplayName("글 수정 테스트")
+    void editPost() {
+        // given
+        UserSignupDto user = new UserSignupDto(
+                "devty1215",
+                "qwer123!@#",
+                "qwer123!@#",
+                "taeyun1215@naver.com",
+                "gp_dted"
+        );
+
+        User saveUser = userService.signup(user);
+
+        PostDto postDto = new PostDto(
+                "제목입니다.",
+                "내용입니다."
+        );
+
+        Post savePost = postService.registerPost(postDto, saveUser);
+
+        PostDto postEditDto = new PostDto(
+                "수정된 제목입니다.",
+                "수정된 내용입니다."
+        );
+
+        // when
+        Post EditPost = postService.editPost(postEditDto, saveUser);
+
+        // then
+        Optional<Post> findPost = postRepository.findByTitle("수정된 제목입니다.");
+        Assertions.assertEquals(EditPost.getTitle(), findPost.get().getTitle());
     }
 
 }
