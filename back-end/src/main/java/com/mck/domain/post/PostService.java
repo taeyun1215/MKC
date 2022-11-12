@@ -12,5 +12,5 @@ public interface PostService {
     Post registerPost(PostDto postDto, User user);
 
     // 게시글 수정.
-    Post editPost(PostDto postDto, User user);
+    Post editPost(Long postId, PostDto postDto, User user);
 }

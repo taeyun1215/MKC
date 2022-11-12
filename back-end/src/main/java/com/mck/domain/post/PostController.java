@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -50,8 +51,9 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PostMapping("/edit")
+    @PostMapping("/edit/{post_id}")
     public ResponseEntity<Post> postEdit(
+            @PathVariable Long post_id,
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal UserDetailsService userDetailsService
@@ -64,7 +66,7 @@ public class PostController {
         }
 
         try {
-            postService.editPost(postDto, user);
+            postService.editPost(post_id, postDto, user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (BusinessException e) {
             bindingResult.reject("notEditPost", ErrorCode.NOT_EDIT_POST.getMessage());

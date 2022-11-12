@@ -34,10 +34,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> findUserEmail = userRepository.findByEmail(userSignupDto.getEmail());
         Optional<User> findUserNickname = userRepository.findByNickname(userSignupDto.getUserName());
 
-        if (findUserEmail == null) {
+        if (findUserEmail.isPresent()) {
             throw new BusinessException(ErrorCode.ALREADY_REGISTERED_MEMBER);
         }
-        if (findUserNickname == null) {
+        if (findUserNickname.isPresent()) {
             throw new BusinessException(ErrorCode.ALREADY_EXIST_NICKNAME);
         }
 
@@ -54,11 +54,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User editUser(UserEditDto userEditDto, User user) {
         validateUserEditDto(userEditDto);
-        userRepository.editUser(
-                userEditDto.getNewNickname(),
-                userEditDto.getNewPassword(),
-                user.getUserId()
-        );
+        userRepository.editUser(userEditDto.getNewNickname(), userEditDto.getNewPassword(), user.getUserId());
 
         return user;
     }
@@ -66,7 +62,7 @@ public class UserServiceImpl implements UserService {
     public void validateUserEditDto(UserEditDto userEditDto) {
         Optional<User> findUserNickname = userRepository.findByNickname(userEditDto.getNewNickname());
 
-        if (findUserNickname == null) {
+        if (findUserNickname.isPresent()) {
             throw new BusinessException(ErrorCode.ALREADY_EXIST_NICKNAME);
         }
     }

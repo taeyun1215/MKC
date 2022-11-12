@@ -3,6 +3,7 @@ package com.mck.domain.post;
 import com.mck.domain.post.dto.PostDto;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepository;
+import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,13 +35,23 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post editPost(PostDto postDto, User user) {
+    public Post editPost(Long postId, PostDto postDto, User user) {
         User findUser = userRepository.findByUserId(user.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         Post post = postDto.toEntity(findUser);
-        postRepository.editPost(post.getTitle(), post.getContent(), post.getPostId());
+        validatePostEditDto(post);
+
+        postRepository.editPost(post.getTitle(), post.getContent(), postId);
 
         return post;
+    }
+
+    public void validatePostEditDto(Post post) {
+        Optional<Post> findPost = postRepository.findByPostId(post.getPostId());
+
+        if (findPost.isPresent()) {
+            throw new BusinessException(ErrorCode.NOT_EXIST_POST);
+        }
     }
 }

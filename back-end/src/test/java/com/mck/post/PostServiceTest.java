@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @SpringBootTest
-//@Transactional  // 테스트는 여러번 반복해서 실행해야 하므로 DB에 반영이 안 되게 하기 위해서 사용함.
+@Transactional  // 테스트는 여러번 반복해서 실행해야 하므로 DB에 반영이 안 되게 하기 위해서 사용함.
 public class PostServiceTest {
 
     @Autowired
@@ -81,7 +81,7 @@ public class PostServiceTest {
         );
 
         // when
-        Post EditPost = postService.editPost(postEditDto, saveUser);
+        Post EditPost = postService.editPost(savePost.getPostId(), postEditDto, saveUser);
 
         // then
         Optional<Post> findPost = postRepository.findByTitle("수정된 제목입니다.");
