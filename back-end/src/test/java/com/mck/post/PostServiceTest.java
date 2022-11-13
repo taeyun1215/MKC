@@ -84,7 +84,7 @@ public class PostServiceTest {
         Post EditPost = postService.editPost(savePost.getPostId(), postEditDto, saveUser);
 
         // then
-        Optional<Post> findPost = postRepository.findByTitle("수정된 제목입니다.");
+        Optional<Post> findPost = postRepository.findByPostId(savePost.getPostId());
         Assertions.assertEquals(EditPost.getTitle(), findPost.get().getTitle());
     }
 
