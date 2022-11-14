@@ -13,4 +13,7 @@ public interface PostService {
 
     // 게시글 수정.
     Post editPost(Long postId, PostDto postDto, User user);
+
+    // 게시글 삭제
+    Post deletePost(Long postId, User user);
 }

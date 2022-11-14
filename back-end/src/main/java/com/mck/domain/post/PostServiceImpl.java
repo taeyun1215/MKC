@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional(readOnly = true)
 public class PostServiceImpl implements PostService {
 
@@ -39,19 +38,47 @@ public class PostServiceImpl implements PostService {
         User findUser = userRepository.findByUserId(user.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        Post post = postDto.toEntity(findUser);
-        validatePostEditDto(post);
+        Optional<Post> findPost = validatePostEdit(postId, findUser);
+        postRepository.editPost(postDto.getTitle(), postDto.getContent(), postId);
 
-        postRepository.editPost(post.getTitle(), post.getContent(), postId);
-
-        return post;
+        return findPost.get();
     }
 
-    public void validatePostEditDto(Post post) {
-        Optional<Post> findPost = postRepository.findByPostId(post.getPostId());
+    public Optional<Post> validatePostEdit(Long postId, User findUser) {
+        Optional<Post> findPostId = postRepository.findByPostId(postId);
+        Optional<Post> findPostIdAndUserId = postRepository.findByPostIdAndUser(postId, findUser);
 
-        if (findPost.isPresent()) {
+        if (findPostId.isPresent()) {
             throw new BusinessException(ErrorCode.NOT_EXIST_POST);
+        } else if (findPostIdAndUserId.isPresent()) {
+            throw new BusinessException(ErrorCode.NOT_EDIT_PERMISSION_POST);
         }
+
+        return findPostIdAndUserId;
+    }
+
+    @Override
+    @Transactional
+    public Post deletePost(Long postId, User user) {
+        User findUser = userRepository.findByUserId(user.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_DELETE_PERMISSION_POST.getMessage()));
+
+        Optional<Post> findPost = validatePostDelete(postId, findUser);
+        postRepository.delete(findPost.get());
+
+        return findPost.get();
+    }
+
+    public Optional<Post> validatePostDelete(Long postId, User findUser) {
+        Optional<Post> findPostId = postRepository.findByPostId(postId);
+        Optional<Post> findPostIdAndUserId = postRepository.findByPostIdAndUser(postId, findUser);
+
+        if (findPostId.isPresent()) {
+            throw new BusinessException(ErrorCode.NOT_EXIST_POST);
+        } else if (findPostIdAndUserId.isPresent()) {
+            throw new BusinessException(ErrorCode.NOT_DELETE_PERMISSION_POST);
+        }
+
+        return findPostIdAndUserId;
     }
 }

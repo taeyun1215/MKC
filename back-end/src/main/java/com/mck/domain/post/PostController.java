@@ -13,15 +13,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/post")
-@Slf4j
 public class PostController {
 
     private final PostService postService;
@@ -44,16 +40,15 @@ public class PostController {
             postService.registerPost(postDto, user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (BusinessException e) {
-            bindingResult.reject("notSavedPost", ErrorCode.NOT_SAVE_POST.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
     }
 
     // 게시글 수정
-    @PostMapping("/edit/{post_id}")
+    @PutMapping("/edit/{post_id}")
     public ResponseEntity<Post> postEdit(
-            @PathVariable Long post_id,
+            @PathVariable("post_id") Long postId,
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal UserDetailsService userDetailsService
@@ -66,12 +61,28 @@ public class PostController {
         }
 
         try {
-            postService.editPost(post_id, postDto, user);
+            postService.editPost(postId, postDto, user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (BusinessException e) {
-            bindingResult.reject("notEditPost", ErrorCode.NOT_EDIT_POST.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/delete/{post_id}")
+    public ResponseEntity<Post> postDelete(
+            @PathVariable("post_id") Long postId,
+            @AuthenticationPrincipal UserDetailsService userDetailsService
+    ) {
+        User user = userDetailsService.getUser();
+
+        try {
+            postService.deletePost(postId, user);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }

@@ -18,7 +18,9 @@ public enum ErrorCode {
     // 게시글
     NOT_SAVE_POST(400, "글이 저장되지 않았습니다."),
     NOT_EDIT_POST(400, "글이 수정되지 않았습니다."),
-    NOT_EXIST_POST(400, "글이 존재하지 않았습니다.");
+    NOT_EXIST_POST(400, "글이 존재하지 않았습니다."),
+    NOT_EDIT_PERMISSION_POST(400, "글을 삭제할 권한이 없습니다."),
+    NOT_DELETE_PERMISSION_POST(400, "글을 삭제할 권한이 없습니다.");
 
 
     ErrorCode(int status, String message) {

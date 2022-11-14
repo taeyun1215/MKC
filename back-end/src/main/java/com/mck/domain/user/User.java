@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // IDENTITY에서 바꾼 이유 : DB에서 삭제해도 계속해서 PK값이 증가함.
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // IDENTITY에서 바꾼 이유 : DB에서 삭제해도 계속해서 PK값이 증가함.
     @Column(name = "user_id")
     private Long userId; // 고유값
 

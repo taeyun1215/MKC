@@ -16,15 +16,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.StringUtils;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -53,7 +50,7 @@ public class UserController {
     }
 
     // 유저 수정
-    @PostMapping("/edit")
+    @PutMapping("/edit")
     public ResponseEntity<User> edit (
             @Validated @ModelAttribute("userEditDto") UserEditDto userEditDto,
             BindingResult bindingResult,
@@ -85,7 +82,7 @@ public class UserController {
     }
 
     // 유저 삭제
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<User> delete(
             String password, BindingResult bindingResult,
             @AuthenticationPrincipal UserDetailsService userDetailsService
