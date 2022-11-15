@@ -88,4 +88,33 @@ public class PostServiceTest {
         Assertions.assertEquals(EditPost.getTitle(), findPost.get().getTitle());
     }
 
+    @Test
+    @DisplayName("글 삭제 테스트")
+    void deletePost() {
+        // given
+        UserSignupDto user = new UserSignupDto(
+                "devty1215",
+                "qwer123!@#",
+                "qwer123!@#",
+                "taeyun1215@naver.com",
+                "gp_dted"
+        );
+
+        User saveUser = userService.signup(user);
+
+        PostDto postDto = new PostDto(
+                "제목입니다.",
+                "내용입니다."
+        );
+
+        Post savePost = postService.registerPost(postDto, saveUser);
+
+        // when
+        postService.deletePost(savePost.getPostId(), saveUser);
+
+        // then
+        Optional<Post> findPost = postRepository.findByPostId(savePost.getPostId());
+        Assertions.assertEquals(true, findPost.isEmpty());
+    }
+
 }
