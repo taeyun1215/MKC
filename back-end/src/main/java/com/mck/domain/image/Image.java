@@ -1,51 +1,48 @@
-package com.mck.domain.post;
+package com.mck.domain.image;
 
 import com.mck.domain.base.BaseEntity;
-import com.mck.domain.image.Image;
+import com.mck.domain.post.Post;
 import com.mck.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 외부에서의 생성을 열어 둘 필요가 없을 때 보안상 권장함.
-@Table(name = "post")
+@Table(name = "image")
 @Getter
-public class Post extends BaseEntity {
+public class Image extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
-    private long postId;
+    @Column(name = "image_id")
+    private long imageId;
 
     @Column(
-            length = 50,
+            length = 200,
             nullable = false
     )
-    private String title; // 제목
+    private String originalImageName; // 원본 이미지 파일
 
     @Column(
             length = 500,
             nullable = false
     )
-    private String content; // 내용
+    private String imageName; // 실제로 로컬에 저장할 이미지 파일명
 
     @Column(
-            length = 100,
+            length = 500,
             nullable = false
     )
-    private String writer; // 작성자
+    private String imageUrl; // 이미지 조회 경로
 
     @ManyToOne(
-            targetEntity = User.class,
+            targetEntity = Post.class,
             fetch = FetchType.LAZY
     ) // 실제로 요청하는 순간 가져오기 위해 LAZY로 사용함.
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    @OneToMany(mappedBy = "post")
-    private List<Image> imageList;
 }
