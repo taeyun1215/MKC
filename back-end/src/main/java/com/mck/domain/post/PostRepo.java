@@ -1,9 +1,9 @@
-package com.mck.domain.comment;
+package com.mck.domain.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface PostRepo extends JpaRepository<Post, Long> {
 
 }

@@ -1,7 +1,7 @@
 package com.mck.domain.post;
 
 import com.mck.domain.user.User;
-import com.mck.domain.user.UserRepository;
+import com.mck.domain.user.UserRepo;
 import com.mck.global.error.ErrorCode;
 import com.mck.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +17,17 @@ import javax.persistence.EntityNotFoundException;
 @Slf4j
 public class PostServiceImpl implements PostService {
 
-    private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final PostRepo postRepo;
+    private final UserRepo userRepo;
 
     @Override
     @Transactional
     public Post registerPost(PostDto postDto, String userId) {
 
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+        User user = userRepo.findByUsername(userId);
 
         Post post = postDto.toEntity(user);
 
-        return postRepository.save(post);
+        return postRepo.save(post);
     }
 }
