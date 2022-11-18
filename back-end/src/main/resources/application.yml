@@ -1,20 +1,48 @@
 server:
-  port: 8080
+  port: 8089
+
+environments:
+  dev:
+    url: http://localhost:8089
+  product:
+    url: http://localhost:8080
 
 spring:
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/mck
-    username: root
-    password: taeyun1215
+    url: jdbc:mariadb://localhost:3306/test
+    username: guhyeon
+    password: Ps$k0O^IA7pM
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
   profiles:
     active: dev
-  web:
-    resources:
-      static-locations: classpath:/static, classpath:/frontend
+#  web:
+#    resources:
+#      static-locations: classpath:/static, classpath:/frontend
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ghkwon0130@gmail.com
+    password: zbptllrlqgohvsus
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+  redis:
+    port: 6379
+    host: 127.0.0.1
+
 
 logging:
   level:
