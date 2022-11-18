@@ -1,20 +1,8 @@
-package com.mck.web.api;
+package com.mck.domain.post;
 
-import com.mck.domain.post.Post;
-import com.mck.domain.post.PostService;
-import com.mck.global.error.BusinessException;
-import com.mck.global.error.ErrorCode;
-import com.mck.web.dto.PostDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller

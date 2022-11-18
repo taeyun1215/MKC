@@ -1,4 +1,4 @@
-package com.mck.web.dto;
+package com.mck.domain.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;

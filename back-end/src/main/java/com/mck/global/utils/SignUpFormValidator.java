@@ -1,7 +1,7 @@
 package com.mck.global.utils;
 
 import com.mck.domain.user.UserRepo;
-import com.mck.web.dto.SignUpForm;
+import com.mck.domain.user.dto.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

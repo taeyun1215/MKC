@@ -1,4 +1,4 @@
-package com.mck.web.api;
+package com.mck.domain.user;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -6,30 +6,21 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.role.Role;
-import com.mck.domain.user.User;
-import com.mck.domain.user.UserService;
+import com.mck.domain.user.dto.SignUpForm;
 import com.mck.domain.useremail.UserEmail;
-import com.mck.global.error.BusinessException;
-import com.mck.global.error.ErrorCode;
 
 import com.mck.global.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
 import com.mck.global.utils.SignUpFormValidator;
-import com.mck.web.dto.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,9 +44,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class UserController {
 
     private final UserService userService;
-
     private final EmailService emailService;
-
     private final SignUpFormValidator signUpFormValidator;
 
     @InitBinder("signUpForm")
@@ -141,7 +130,6 @@ public class UserController {
                 token.put("refresh_token", refresh_token);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), token);
-
             } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
                 response.setStatus(FORBIDDEN.value());
@@ -183,7 +171,7 @@ public class UserController {
 
     // 인증 메일 확인
     @GetMapping("/check-email-code")
-    public ResponseEntity<ReturnObject> checkEmailCode(String code, String email, String username, Model model){
+    public ResponseEntity<ReturnObject> checkEmailCode(String code, String email, String username, Model model) {
         User user = userService.getUser(username);
         ReturnObject object;
         if(user == null){

@@ -1,4 +1,4 @@
-package com.mck.web.dto;
+package com.mck.domain.post;
 
 import com.mck.domain.post.Post;
 import com.mck.domain.user.User;
