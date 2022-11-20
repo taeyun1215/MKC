@@ -1,4 +1,4 @@
-package com.mck.web.api;
+package com.mck.domain.useremail;
 
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;

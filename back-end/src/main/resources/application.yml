@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 8080
 
 environments:
   dev:
@@ -9,12 +9,12 @@ environments:
 
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/test
-    username: guhyeon
-    password: Ps$k0O^IA7pM
+    url: jdbc:mariadb://localhost:3306/mck
+    username: root
+    password: taeyun1215
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -22,9 +22,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
   profiles:
     active: dev
-#  web:
-#    resources:
-#      static-locations: classpath:/static, classpath:/frontend
 
   mail:
     host: smtp.gmail.com
@@ -42,7 +39,6 @@ spring:
   redis:
     port: 6379
     host: 127.0.0.1
-
 
 logging:
   level:

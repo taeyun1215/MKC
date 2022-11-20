@@ -8,54 +8,55 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static javax.persistence.GenerationType.AUTO;
+@Entity
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+public class User extends BaseEntity{
 
-@Entity @Data @NoArgsConstructor @AllArgsConstructor
-public class User {
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO) // IDENTITY에서 바꾼 이유 : DB에서 삭제해도 계속해서 PK값이 증가함.
-//    @Column(name = "user_id")
-//    private Long userId; // 고유값
-//
-//    @Column(
-//            length = 50,
-//            nullable = false,
-//            unique = true,
-//            name = "user_name"
-//    )
-//    private String userName; // 아이디, 중복체크
-//
-//    @Column(
-//            length = 200,
-//            nullable = false
-//    )
-//    private String password; // 비밀번호
-//
-//    @Column(
-//            length = 50,
-//            nullable = false,
-//            unique = true
-//    )
-//    private String email; // 이메일, 중복체크
-//
-//    @Column(
-//            length = 100,
-//            nullable = false,
-//            unique = true
-//    )
-//    private String nickname; // 닉네임, 중복체크
-
-    @Id @GeneratedValue(strategy = AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(
+            length = 100,
+            nullable = false,
+            unique = true
+    )
     private String nickname; // 닉네임
-    private String username;
-    private String password;
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles = new ArrayList<>();
-    private String email;
+
+    @Column(
+            length = 50,
+            nullable = false,
+            unique = true
+    )
+    private String username; // 아이디
+
+    @Column(
+            length = 200,
+            nullable = false
+    )
+    private String password; // 비밀번호
+
+    @Column(
+            length = 50,
+            nullable = false,
+            unique = true
+    )
+    private String email; // 이메일
+
     private boolean emailVerified; // 이메일 인증 여부
+
     private LocalDateTime joinedAt; // 로그인한 시간
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "name", referencedColumnName = "name")}
+    )
+    private Collection<Role> roles = new ArrayList<>();  // todo : 권한은 하나만 주는 걸로 해도 되지 않은가?
 
     // 회원가입 완료 처리
     public void completeSignUp() {
