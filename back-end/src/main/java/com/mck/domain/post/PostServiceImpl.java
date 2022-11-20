@@ -1,5 +1,6 @@
 package com.mck.domain.post;
 
+import com.mck.domain.image.Image;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.global.error.BusinessException;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -31,11 +33,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post registerPost(PostDto postDto, User user) {
+    public Post registerPost(PostDto postDto, List<MultipartFile> images, User user) {
         User findUser = userRepo.findById(user.getId()) // 스프링으로 로그인한 회원을 가져오지만 한번 더 DB에 있는지 조회함.
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         Post post = postDto.toEntity(findUser);
+
+        List<Image> imageList = fileHandler.parseFileInfo(images);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", post.getTitle());
 
         return postRepo.save(post);

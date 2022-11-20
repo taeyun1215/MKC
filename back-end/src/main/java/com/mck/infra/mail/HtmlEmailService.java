@@ -1,4 +1,4 @@
-package com.mck.global.mail;
+package com.mck.infra.mail;
 
 import com.mck.domain.useremail.UserEmail;
 import com.mck.domain.useremail.UserEmailRepo;

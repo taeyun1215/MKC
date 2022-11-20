@@ -2,10 +2,9 @@ package com.mck.domain.user;
 
 import com.mck.domain.role.Role;
 import com.mck.domain.role.RoleRepo;
-import com.mck.global.mail.EmailService;
+import com.mck.infra.mail.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 

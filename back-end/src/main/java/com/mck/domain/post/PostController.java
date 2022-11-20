@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -35,6 +36,7 @@ public class PostController {
     // 게시글 추가
     @PostMapping("/new")
     public ResponseEntity<ReturnObject> savePost(
+            @RequestPart(value="image", required=false) List<MultipartFile> images,
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -50,7 +52,7 @@ public class PostController {
 
             return ResponseEntity.badRequest().body(object);
         } else {
-            Post post = postService.registerPost(postDto, user);
+            Post post = postService.registerPost(postDto, images, user);
 
             ReturnObject object = ReturnObject.builder()
                     .msg("ok")

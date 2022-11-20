@@ -9,7 +9,7 @@ import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
-import com.mck.global.mail.EmailService;
+import com.mck.infra.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
 import com.mck.global.utils.SignUpFormValidator;
 import lombok.RequiredArgsConstructor;
