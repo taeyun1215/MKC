@@ -25,4 +25,4 @@
 
 
 ### ERD
-<img width="337" alt="image" src="https://user-images.githubusercontent.com/65766105/200317521-27607037-d8aa-4392-9188-b94df23dab1a.png">
+<img width="791" alt="image" src="https://user-images.githubusercontent.com/65766105/202895088-45a6350c-4c46-4ff7-9762-4e406177915f.png">
