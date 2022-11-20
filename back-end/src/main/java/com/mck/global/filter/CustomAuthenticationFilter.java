@@ -72,7 +72,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
 
         // access_token을 재발급 받을 수 있는 토큰
-        //
         String refresh_token = JWT.create()
                 // 토큰 이름
                 .withSubject(user.getUsername())

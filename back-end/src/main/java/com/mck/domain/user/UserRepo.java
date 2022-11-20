@@ -16,14 +16,13 @@ public interface UserRepo extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     void deleteByUsername(String username);
 
-    Optional<User> findByUserId(Long user_id);
-    Optional<User> findByEmail(String email);
-    Optional<User> findByUserName(String userName);
-    Optional<User> findByNickname(String nickname);
-
-    @Modifying
-    @Query(value = "UPDATE users u SET u.nickname = :nickname, u.password = :password WHERE u.user_id = :user_id", nativeQuery = true)
-    void editUser(@Param("nickname") String nickname, @Param("password") String password, @Param("user_id") Long user_id);
-
+    // by ty
+//    Optional<User> findById(Long user_id);
+//    Optional<User> findByEmail(String email);
+//    Optional<User> findByUserName(String userName);
+//
+//    @Modifying
+//    @Query(value = "UPDATE users u SET u.nickname = :nickname, u.password = :password WHERE u.id = :id", nativeQuery = true)
+//    void editUser(@Param("nickname") String nickname, @Param("password") String password, @Param("id") Long user_id);
 
 }

@@ -18,7 +18,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
-    private final PasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
 
@@ -27,7 +26,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         log.info("새로운 유저 정보를 DB에 저장했습니다 : ", user.getUsername());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role role = roleRepo.findByName("ROLE_USER");
         user.getRoles().add(role);
         return userRepo.save(user);

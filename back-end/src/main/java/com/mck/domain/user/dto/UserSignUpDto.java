@@ -1,8 +1,10 @@
 package com.mck.domain.user.dto;
 
+import com.mck.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor // 테스트 코드 작성용
-public class SignUpForm {
+public class UserSignUpDto {
 
     @Size(max = 12, message = "닉네임은 12자 이하로 입력해주세요.")
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
@@ -37,5 +39,15 @@ public class SignUpForm {
     @Pattern(regexp = "^[a-z0-9]+@goldenplanet.co.kr$",
             message = "goldenplanet.co.kr 이메일만 사용 가능합니다")
     private String email;
+
+    public User toEntity(PasswordEncoder passwordEncoder) {
+        return User.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .nickname(nickname)
+                .email(email)
+                .emailVerified(false)
+                .build();
+    }
 
 }

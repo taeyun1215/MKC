@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.role.Role;
-import com.mck.domain.user.dto.SignUpForm;
+import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
 import com.mck.global.mail.EmailService;
@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -46,6 +47,7 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final SignUpFormValidator signUpFormValidator;
+    private final PasswordEncoder passwordEncoder;
 
     @InitBinder("signUpForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -59,7 +61,7 @@ public class UserController {
 
     // 유저 등록
     @PostMapping("/user")
-    public ResponseEntity<ReturnObject> saveUser(@RequestBody @Valid SignUpForm signUpForm, Errors errors) {
+    public ResponseEntity<ReturnObject> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
         if (errors.hasErrors()) {
             System.out.println("검증실패");
@@ -69,26 +71,15 @@ public class UserController {
                     .build();
             return ResponseEntity.badRequest().body(object);
         } else {
-            User user = saveNewUser(signUpForm);
+            User user = userSignUpDto.toEntity(passwordEncoder);
+            User saveUser = userService.saveUser(user);
 
             ReturnObject object = ReturnObject.builder()
                     .msg("ok")
-                    .data(user).build();
+                    .data(saveUser).build();
 
             return ResponseEntity.created(uri).body(object);
         }
-    }
-
-    // 유저 생성
-    private User saveNewUser(SignUpForm signUpForm) {
-        User user = new User();
-        user.setUsername(signUpForm.getUsername());
-        user.setPassword(signUpForm.getPassword());
-        user.setNickname(signUpForm.getNickname());
-        user.setEmail(signUpForm.getEmail());
-        user.setEmailVerified(false);
-
-        return userService.saveUser(user);
     }
 
     @PostMapping("/role")

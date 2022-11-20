@@ -12,6 +12,7 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class User extends BaseEntity{
 
     @Id
@@ -55,7 +56,7 @@ public class User extends BaseEntity{
             joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "name", referencedColumnName = "name")}
     )
-    private Collection<Role> roles = new ArrayList<>();
+    private Collection<Role> roles = new ArrayList<>();  // todo : 권한은 하나만 주는 걸로 해도 되지 않은가?
 
     // 회원가입 완료 처리
     public void completeSignUp() {
