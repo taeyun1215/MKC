@@ -19,14 +19,18 @@ export default function signup() {
     email: yup
       .string()
       .required("이메일은 필수 입력 정보입니다 입력해주세요")
-      .email("이메일 형식이 아닙니다."),
+      .email("이메일 형식이 아닙니다.")
+      .matches(
+        "goldenplanet.co.kr",
+        "도메인 주소는 반드시 goldenplanet.co.kr 입니다."
+      ),
     password: yup
       .string()
       .required("영문, 숫자, 특수문자 포함 8자리를 입력해주세요.")
       .min(8, "최소 8자 이상 가능합니다")
       .max(16, "최대 20자 까지만 가능합니다")
       .matches(
-       /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[,./;'<>?:"~!@#$%^&*()])[a-zA-Z0-9,./;'<>?:"~!@#$%^&*()]{8,20}$/,
+        /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[,./;'<>?:"~!@#$%^&*()])[a-zA-Z0-9,./;'<>?:"~!@#$%^&*()]{8,20}$/,
         "영문, 숫자, 특수문자 포함 8자리를 입력해주세요."
       ),
     passwordConfirm: yup
@@ -45,13 +49,14 @@ export default function signup() {
   const onSubmit = (data) => {
     console.log("data", data);
   };
+
   return (
-    <div className="signup">
-      <div className="signup_title">
+    <div className="sign">
+      <div className="sign_title">
         <Image src={logo} alt="yehLogo" />
         <span>조직문화의 개선과 소통을 위해 지금 시작해보세요</span>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="signup_contents">
+      <form onSubmit={handleSubmit(onSubmit)} className="sign_contents">
         <label htmlFor="id">아이디</label>
         <input
           name="id"
@@ -90,13 +95,12 @@ export default function signup() {
         <input
           name="email"
           type="email"
-          placeholder="이메일을 입력해주세요"
+          placeholder="이메일을 입력해주세요 (user@goldenplane.co.kr)"
           {...register("email")}
           autoComplete="off"
         />
-        {/* <button>인증하기</button> */}
         {errors.email && <p>{errors.email.message}</p>}
-        <button type="submit" className="signup_Btn">
+        <button type="submit" className="sign_Btn">
           가입하기
         </button>
       </form>
