@@ -43,4 +43,16 @@ public class Image {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    public void updateItemImage(String originalImageName, String imageName, String imageUrl){
+        this.originalImageName = originalImageName;
+        this.imageName = imageName;
+        this.imageUrl = imageUrl;
+    }
+
+    public void initImageInfo() {
+        this.originalImageName = "";
+        this.imageName = "";
+        this.imageUrl = "";
+    }
+
 }

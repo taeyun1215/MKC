@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class PostController {
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+    ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
         User user = userDetails.getUser();
 
@@ -51,7 +52,7 @@ public class PostController {
 
             return ResponseEntity.badRequest().body(object);
         } else {
-            Post post = postService.registerPost(postDto, user);
+            Post post = postService.savePost(postDto, user);
 
             ReturnObject object = ReturnObject.builder()
                     .msg("ok")

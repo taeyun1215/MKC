@@ -34,7 +34,7 @@ public class FileService {
         return storeFileResult;
     }
 
-    // UploadFile로 변환.
+    // UploadFile 로 변환.
     public UploadFile storeFile(MultipartFile multipartFile) throws IOException {
 
         if(multipartFile.isEmpty()) {
@@ -50,7 +50,7 @@ public class FileService {
     }
 
     // 로컬에 저장할 이름 생성.
-    private String  createStoreFileName(String originalFilename) {
+    private String createStoreFileName(String originalFilename) {
         String uuid = UUID.randomUUID().toString();
         String ext = extractExt(originalFilename);
         return uuid + "." + ext;

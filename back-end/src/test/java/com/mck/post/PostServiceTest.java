@@ -1,18 +1,24 @@
 package com.mck.post;
 
+import ch.qos.logback.core.util.Loader;
 import com.mck.domain.post.Post;
 import com.mck.domain.post.PostDto;
 import com.mck.domain.post.PostRepo;
 import com.mck.domain.post.PostService;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
+import com.mck.domain.user.dto.UserSignUpDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -25,12 +31,14 @@ public class PostServiceTest {
     private PostRepo postRepo;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("글 작성 테스트")
     void registerPost() {
         // given
-        UserSignupDto user = new UserSignupDto(
+        UserSignUpDto user = new UserSignUpDto(
                 "devty1215",
                 "qwer123!@#",
                 "qwer123!@#",
@@ -38,15 +46,22 @@ public class PostServiceTest {
                 "gp_dted"
         );
 
-        User saveUser = userService.signup(user); // 유저 정보 DB에 저장하기
+        User userEntity = user.toEntity(passwordEncoder);
+        User saveUser = userService.saveUser(userEntity); // 유저 정보 DB에 저장하기
+
+        String fileName = "";
+        Resource resource = Loader.getResource()
+        List<MockMultipartFile> files
 
         PostDto postDto = new PostDto(
                 "제목입니다.",
-                "내용입니다."
+                "내용입니다.",
+                "이태윤",
+
         );
 
         // when
-        Post savePost = postService.registerPost(postDto, saveUser); // 여기서 유저 정보를 찾기에 위해서 DB에 저장해줘야함.
+        Post savePost = postService.savePost(postDto, saveUser); // 여기서 유저 정보를 찾기에 위해서 DB에 저장해줘야함.
 
         // then
         Optional<Post> findPost = postRepo.findByTitle("제목입니다.");

@@ -1,6 +1,6 @@
 package com.mck.domain.post;
 
-import com.mck.domain.image.Image;
+import com.mck.domain.image.ImageService;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.global.error.BusinessException;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,8 @@ public class PostServiceImpl implements PostService {
     private final PostRepo postRepo;
     private final UserRepo userRepo;
 
+    private final ImageService imageService;
+
     @Override
     @Transactional
     public List<Post> getPostAll() {
@@ -32,16 +35,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post registerPost(PostDto postDto, User user) {
+    public Post savePost(PostDto postDto, User user) throws IOException {
         User findUser = userRepo.findById(user.getId()) // 스프링으로 로그인한 회원을 가져오지만 한번 더 DB에 있는지 조회함.
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         Post post = postDto.toEntity(findUser);
-        Post savePost =postRepo.save(post);
-
+        Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", post.getTitle());
 
-        return
+        imageService.saveImages(savePost, postDto.getItemImageFiles());
+        log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", post.getTitle());
+
+        return savePost;
     }
 
     @Override
@@ -57,6 +62,7 @@ public class PostServiceImpl implements PostService {
         return postDto.toEntity(user);
     }
 
+    @Transactional
     public void validatePostEdit(Long postId, User findUser) {
         Optional<Post> findPostId = postRepo.findById(postId);
         Optional<Post> findPostIdAndUserId = postRepo.findByIdAndUser(postId, findUser);
@@ -81,6 +87,7 @@ public class PostServiceImpl implements PostService {
         return findPost.get();
     }
 
+    @Transactional
     public Optional<Post> validatePostDelete(Long postId, User findUser) {
         Optional<Post> findPostId = postRepo.findById(postId);
         Optional<Post> findPostIdAndUserId = postRepo.findByIdAndUser(postId, findUser);

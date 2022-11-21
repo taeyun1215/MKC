@@ -1,9 +1,25 @@
 package com.mck.domain.image;
 
+import com.mck.domain.post.Post;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public interface ImageService {
+    // DB에 이미지 저장.
+    void saveImages(Post post, List<MultipartFile> imageFiles) throws IOException;
+
+    // 이미지 순번대로 반환해주는 JPA
+    List<Image> findByPostOrderByImageIdAsc(Post post);
+
+    // 이미지 업데이트
+    void updateItemImage(Image image, MultipartFile imageFile) throws IOException;
+
+    // 이미지 삭제
+    void deleteItemImage(Image image) throws IOException;
 }
