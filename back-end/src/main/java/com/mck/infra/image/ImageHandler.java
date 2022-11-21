@@ -75,28 +75,28 @@ public class ImageHandler {
                 // 파일명 중복 피하고자 나노초까지 얻어와 지정
                 String new_file_name = System.nanoTime() + originalFileExtension;
 
-                // 파일 DTO 생성
-                PhotoDto photoDto = PhotoDto.builder()
-                        .origFileName(multipartFile.getOriginalFilename())
-                        .filePath(path + File.separator + new_file_name)
-                        .fileSize(multipartFile.getSize())
-                        .build();
+//                // 파일 DTO 생성
+//                PhotoDto photoDto = PhotoDto.builder()
+//                        .origFileName(multipartFile.getOriginalFilename())
+//                        .filePath(path + File.separator + new_file_name)
+//                        .fileSize(multipartFile.getSize())
+//                        .build();
+//
+//                // 파일 DTO 이용하여 Photo 엔티티 생성
+//                Photo photo = new Photo(
+//                        photoDto.getOrigFileName(),
+//                        photoDto.getFilePath(),
+//                        photoDto.getFileSize()
+//                );
 
-                // 파일 DTO 이용하여 Photo 엔티티 생성
-                Photo photo = new Photo(
-                        photoDto.getOrigFileName(),
-                        photoDto.getFilePath(),
-                        photoDto.getFileSize()
-                );
-
-                Image image = Image.builder()
-                        .originalImageName(multipartFile.getOriginalFilename())
-                        .imageName(new_file_name)
-                        .imageUrl() // todo
-                        .build();
+//                Image image = Image.builder()
+//                        .originalImageName(multipartFile.getOriginalFilename())
+//                        .imageName(new_file_name)
+//                        .imageUrl(multipartFile.) // todo
+//                        .build();
 
                 // 생성 후 리스트에 추가
-                fileList.add(photo);
+//                fileList.add(photo);
 
                 // 업로드 한 파일 데이터를 지정한 파일에 저장
                 file = new File(absolutePath + path + File.separator + new_file_name);

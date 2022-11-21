@@ -4,8 +4,10 @@ import com.mck.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,6 +21,8 @@ public class PostDto {
     private String content;
 
     private String writer;
+
+    private List<MultipartFile> itemImageFiles;
 
     public Post toEntity(User user) {
         return Post.builder()
