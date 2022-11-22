@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
@@ -51,13 +52,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post editPost(Long postId, PostDto postDto, User user) {
+    public Post editPost(Long postId, PostDto postDto, User user) throws IOException {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         validatePostEdit(postId, findUser);
         postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
-        // log.info("게시글 정보 수정했습니다. ", post.getTitle());
+        log.info("게시글 정보를 업데이트 했습니다. ", postDto.getTitle());
+
+        Optional<Post> post = postRepo.findById(postId);
+        List<MultipartFile> imageFiles = postDto.getItemImageFiles();
+
+        // todo : 한번에 다 받고 안에서 한번에 다 나누자 List<MultipartFile>
+        for (MultipartFile imageFile : imageFiles) {
+            imageService.updateImage(imageFile, post.get());
+        }
+        log.info("게시글에 이미지를 업데이트 했습니다. ");
 
         return postDto.toEntity(user);
     }

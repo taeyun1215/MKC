@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
@@ -86,7 +85,7 @@ public class PostController {
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+    ) throws IOException {
         User user = userDetails.getUser();
 
         if (bindingResult.hasErrors()) {

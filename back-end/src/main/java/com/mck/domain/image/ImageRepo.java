@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ImageRepo extends JpaRepository<Image, Long> {
 
+    List<Image> findByPost(Post post);
     List<Image> findByPostOrderByIdAsc(Post post);
 
 }

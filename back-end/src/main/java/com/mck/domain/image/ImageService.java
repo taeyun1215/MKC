@@ -18,8 +18,8 @@ public interface ImageService {
     List<Image> findByPostOrderByImageIdAsc(Post post);
 
     // 이미지 업데이트
-    void updateItemImage(Image image, MultipartFile imageFile) throws IOException;
+    void updateImage(MultipartFile imageFile, Post post) throws IOException;
 
     // 이미지 삭제
-    void deleteItemImage(Image image) throws IOException;
+    void deleteImage(Image image) throws IOException;
 }

@@ -59,7 +59,11 @@ public class ImageServiceImpl implements ImageService {
 
     // 이미지 업데이트
     @Transactional
-    public void updateItemImage(Image image, MultipartFile imageFile) throws IOException {
+    public void updateImage(MultipartFile imageFile, Post post) throws IOException {
+        List<Image> imageList = imageRepo.findByPost(post);
+        // todo : 해당 post를 갖고 있는 걸 로컬과 db에서 삭제해준다.
+        // todo : 그리고 다시 새로 받은 걸 추가한다.
+
         // 기존 상품 이미지 파일이 존재하는 경우 파일 삭제
         if(StringUtils.hasText(image.getImageName())) {
             fileService.deleteFile(image.getImageUrl());
@@ -77,7 +81,7 @@ public class ImageServiceImpl implements ImageService {
 
     // 이미지 삭제
     @Transactional
-    public void deleteItemImage(Image image) throws IOException {
+    public void deleteImage(Image image) throws IOException {
         // 기존 이미지 파일 삭제
         String fileUploadUrl = fileService.getFullFileUploadPath(image.getImageName());
         fileService.deleteFile(fileUploadUrl);
