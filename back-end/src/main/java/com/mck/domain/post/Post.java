@@ -57,7 +57,7 @@ public class Post {
             fetch = FetchType.LAZY
     )
     @OrderBy("id DESC")
-    private List<Image> images; // 댓글
+    private List<Image> images; // 이미지
 
     @OneToMany(
             targetEntity = Comment.class,

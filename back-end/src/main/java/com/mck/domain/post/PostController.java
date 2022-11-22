@@ -1,6 +1,8 @@
 package com.mck.domain.post;
 
 import com.mck.domain.user.User;
+import com.mck.domain.user.UserService;
+import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
 import com.mck.global.service.UserDetailsImpl;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +30,8 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     // 모든 게시글 가져오기.
     @GetMapping("/postAll")
@@ -38,11 +43,22 @@ public class PostController {
     @PostMapping("/new")
     public ResponseEntity<ReturnObject> savePost(
             @Validated @ModelAttribute("postDto") PostDto postDto,
-            BindingResult bindingResult,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            BindingResult bindingResult
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
-        User user = userDetails.getUser();
+//        User user = userDetails.getUser();
+
+        UserSignUpDto userSignUpDto = new UserSignUpDto(
+                "devty1215",
+                "gp",
+                "qwer123!@#",
+                "qwer123!@#",
+                "taeyun1215@naver.com"
+        );
+
+        User userEntity = userSignUpDto.toEntity(passwordEncoder);
+        User user = userService.saveUser(userEntity); // 유저 정보 DB에 저장하기
 
         if (bindingResult.hasErrors()) {
             ReturnObject object = ReturnObject.builder()

@@ -1,9 +1,13 @@
 package com.mck.domain.user;
 
 import com.mck.domain.role.Role;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
+@Transactional(readOnly = true)
 public interface UserService {
     // DB에 유저정보 저장
     User saveUser(User user);

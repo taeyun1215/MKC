@@ -22,7 +22,7 @@ public class FileService {
         return fileUploadPath + filename;
     }
 
-    // 이미지 파일이 여러개 인 경우 나눠서 저장하기 위함.
+    // 이미지 파일이 여러개 인 경우 나눠서 저장하기 위함. -> 근데 그전에 service단에서 미리 나눠주고 처리함.
     public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
         List<UploadFile> storeFileResult = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
