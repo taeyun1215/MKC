@@ -22,7 +22,7 @@ public class PostDto {
 
     private String writer;
 
-    private List<MultipartFile> itemImageFiles;
+    private List<MultipartFile> imageFiles;
 
     public Post toEntity(User user) {
         return Post.builder()

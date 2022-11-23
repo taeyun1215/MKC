@@ -28,13 +28,13 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public void saveImages(Post post, List<MultipartFile> imageFiles) throws IOException {
         for (MultipartFile imageFile : imageFiles) {
-            saveItemImage(post, imageFile);
+            saveImage(post, imageFile);
         }
     }
 
     // 하나씩 파일을 나눠서 저장함.
     @Transactional
-    public void saveItemImage(Post post, MultipartFile imageFile) throws IOException {
+    public void saveImage(Post post, MultipartFile imageFile) throws IOException {
 
         // fileService 에서 다 처리 해 뒀습니다.
         UploadFile uploadFile = fileService.storeFile(imageFile);
@@ -59,24 +59,22 @@ public class ImageServiceImpl implements ImageService {
 
     // 이미지 업데이트
     @Transactional
-    public void updateImage(MultipartFile imageFile, Post post) throws IOException {
-        List<Image> imageList = imageRepo.findByPost(post);
-        // todo : 해당 post를 갖고 있는 걸 로컬과 db에서 삭제해준다.
-        // todo : 그리고 다시 새로 받은 걸 추가한다.
+    public void updateImage(List<MultipartFile> imageFiles, Post post) throws IOException {
+
+        List<Image> oldImages = imageRepo.findByPost(post);
 
         // 기존 상품 이미지 파일이 존재하는 경우 파일 삭제
-        if(StringUtils.hasText(image.getImageName())) {
-            fileService.deleteFile(image.getImageUrl());
+        for (Image oldImage : oldImages) {
+            if(StringUtils.hasText(oldImage.getImageName())) {
+                fileService.deleteFile(oldImage.getImageUrl()); // local 데이터 삭제
+            }
         }
 
-        // 새로운 이미지 파일 등록
-        UploadFile uploadFile = fileService.storeFile(imageFile);
-        String originalFilename = uploadFile.getOriginalFileName();
-        String storeFileName = uploadFile.getStoreFileName();
-        String imageUrl = IMAGE_URL_PREFIX + storeFileName;
+        // DB 데이터 삭제
+        imageRepo.deleteByPost(post);
 
-        // 상품 이미지 파일 정보 업데이트, entity 에서 처리.
-        image.updateItemImage(originalFilename, storeFileName, imageUrl);
+        // DB 이미지 저장
+        saveImages(post, imageFiles);
     }
 
     // 이미지 삭제

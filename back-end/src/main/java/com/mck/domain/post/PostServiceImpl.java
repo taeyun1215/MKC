@@ -42,10 +42,10 @@ public class PostServiceImpl implements PostService {
 
         Post post = postDto.toEntity(findUser);
         Post savePost = postRepo.save(post);
-        log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", post.getTitle());
+        log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
 
-        imageService.saveImages(savePost, postDto.getItemImageFiles());
-        log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", post.getTitle());
+        imageService.saveImages(savePost, postDto.getImageFiles());
+        log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
 
         return savePost;
     }
@@ -61,12 +61,9 @@ public class PostServiceImpl implements PostService {
         log.info("게시글 정보를 업데이트 했습니다. ", postDto.getTitle());
 
         Optional<Post> post = postRepo.findById(postId);
-        List<MultipartFile> imageFiles = postDto.getItemImageFiles();
+        List<MultipartFile> imageFiles = postDto.getImageFiles();
 
-        // todo : 한번에 다 받고 안에서 한번에 다 나누자 List<MultipartFile>
-        for (MultipartFile imageFile : imageFiles) {
-            imageService.updateImage(imageFile, post.get());
-        }
+        imageService.updateImage(imageFiles, post.get());
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 
         return postDto.toEntity(user);

@@ -64,7 +64,9 @@ public class FileService {
 
     // 이미지 파일 삭제.
     public void deleteFile(String fileUploadUrl) {
-        File deleteFile = new File(fileUploadUrl);
+        String localFileUploadUrl = getFullFileUploadPath(fileUploadUrl);
+        File deleteFile = new File(localFileUploadUrl);
+
         if(deleteFile.exists()) {
             deleteFile.delete();
             log.info("파일을 삭제하였습니다.");

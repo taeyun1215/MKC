@@ -18,7 +18,7 @@ public interface ImageService {
     List<Image> findByPostOrderByImageIdAsc(Post post);
 
     // 이미지 업데이트
-    void updateImage(MultipartFile imageFile, Post post) throws IOException;
+    void updateImage(List<MultipartFile> imageFile, Post post) throws IOException;
 
     // 이미지 삭제
     void deleteImage(Image image) throws IOException;

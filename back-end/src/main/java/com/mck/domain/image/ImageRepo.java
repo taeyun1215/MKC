@@ -2,6 +2,8 @@ package com.mck.domain.image;
 
 import com.mck.domain.post.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,5 +13,9 @@ public interface ImageRepo extends JpaRepository<Image, Long> {
 
     List<Image> findByPost(Post post);
     List<Image> findByPostOrderByIdAsc(Post post);
+
+//    @Modifying
+//    @Query(value = "delete from image i where i.post = :post", nativeQuery = true)
+    void deleteByPost(Post post);
 
 }
