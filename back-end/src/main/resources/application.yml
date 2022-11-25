@@ -47,4 +47,5 @@ logging:
 
 file:
   upload:
-    path: C:/Users/tylee/Desktop/image/
+    path: /Users/taeyun/Desktop/image/
+    # C:/Users/tylee/Desktop/image/

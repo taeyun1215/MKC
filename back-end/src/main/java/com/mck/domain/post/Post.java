@@ -68,6 +68,7 @@ public class Post {
             fetch = FetchType.LAZY
     )
     @OrderBy("id DESC")
+    @JsonBackReference //순환참조 방지
     private List<Comment> comments; // 댓글
 
     @OneToMany(

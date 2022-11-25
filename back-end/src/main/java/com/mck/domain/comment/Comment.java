@@ -1,5 +1,6 @@
 package com.mck.domain.comment;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mck.domain.base.BaseEntity;
 import com.mck.domain.post.Post;
 import com.mck.domain.user.User;
@@ -42,6 +43,6 @@ public class Comment extends BaseEntity {
             targetEntity = Post.class,
             fetch = FetchType.LAZY
     )
-    @JoinColumn
+    @JsonManagedReference // 순환참조 방지
     private Post post;
 }

@@ -31,9 +31,9 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
+    private final UserService userService; // 삭제 예정.
+    private final PasswordEncoder passwordEncoder; // 삭제 예정.
     private final UserRepo userRepo; // 삭제 예정.
 
     // 모든 게시글 가져오기.
@@ -85,16 +85,15 @@ public class PostController {
     // 게시글 수정
     @PutMapping("/edit/{post_id}")
     public ResponseEntity<ReturnObject> editPost(
-//            @PathVariable("post_id") Long postId,
+            @PathVariable("post_id") Long postId,
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult
 //            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
 //        User user = userDetails.getUser();
 
-        Optional<User> userOptional = userRepo.findById(1L); // 삭제 예정.
+        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
         User user = userOptional.get(); // 삭제 예정.
-        Long postId = 1L; // 삭제 예정.
 
         if (bindingResult.hasErrors()) {
             ReturnObject object = ReturnObject.builder()
@@ -123,7 +122,7 @@ public class PostController {
     ) throws IOException {
 //        User user = userDetails.getUser();
 
-        Optional<User> userOptional = userRepo.findById(1L); // 삭제 예정.
+        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
         User user = userOptional.get(); // 삭제 예정.
         Long postId = 1L; // 삭제 예정.
 
