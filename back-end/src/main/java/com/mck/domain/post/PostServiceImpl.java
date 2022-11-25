@@ -59,14 +59,14 @@ public class PostServiceImpl implements PostService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        validatePostEdit(postId, findUser);
+        validatePostEdit(postId, findUser); // 유효성 검사
         postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
-        log.info("게시글 정보를 업데이트 했습니다. ", postDto.getTitle());
+        log.info("게시글 정보를 업데이트 했습니다 : ", postDto.getTitle());
 
-        Optional<Post> post = postRepo.findById(postId);
+        Optional<Post> findPost = postRepo.findById(postId);
         List<MultipartFile> imageFiles = postDto.getImageFiles();
 
-        imageService.updateImage(imageFiles, post.get());
+        imageService.updateImage(imageFiles, findPost.get());
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 
         return postDto.toEntity(user);
@@ -86,18 +86,24 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post deletePost(Long postId, User user) {
+    public Post deletePost(Long postId, User user) throws IOException {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_DELETE_PERMISSION_POST.getMessage()));
 
-        Optional<Post> findPost = validatePostDelete(postId, findUser);
+        validatePostDelete(postId, findUser);  // 유효성 검사
+        Optional<Post> findPost = postRepo.findById(postId);
+
+        imageService.deleteImage(findPost.get());
+        log.info("로컬에 이미지를 삭제했습니다 : ", findPost.get().getImages());
+
         postRepo.delete(findPost.get());
+        log.info("게시글을 삭제하였습니다 : ", findPost.get().getTitle());
 
         return findPost.get();
     }
 
     @Transactional
-    public Optional<Post> validatePostDelete(Long postId, User findUser) {
+    public void validatePostDelete(Long postId, User findUser) {
         Optional<Post> findPostId = postRepo.findById(postId);
         Optional<Post> findPostIdAndUserId = postRepo.findByIdAndUser(postId, findUser);
 
@@ -106,7 +112,5 @@ public class PostServiceImpl implements PostService {
         } else if (findPostIdAndUserId.isEmpty()) {
             throw new BusinessException(ErrorCode.NOT_DELETE_PERMISSION_POST);
         }
-
-        return findPostIdAndUserId;
     }
 }

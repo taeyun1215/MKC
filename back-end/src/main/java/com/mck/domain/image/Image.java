@@ -44,10 +44,4 @@ public class Image {
     @JsonManagedReference // 순환참조 방지
     private Post post;
 
-    public void initImageInfo() {
-        this.originalImageName = "";
-        this.imageName = "";
-        this.imageUrl = "";
-    }
-
 }

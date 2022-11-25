@@ -14,8 +14,6 @@ public interface ImageRepo extends JpaRepository<Image, Long> {
     List<Image> findByPost(Post post);
     List<Image> findByPostOrderByIdAsc(Post post);
 
-//    @Modifying
-//    @Query(value = "delete from image i where i.post = :post", nativeQuery = true)
     void deleteByPost(Post post);
 
 }

@@ -21,5 +21,5 @@ public interface ImageService {
     void updateImage(List<MultipartFile> imageFile, Post post) throws IOException;
 
     // 이미지 삭제
-    void deleteImage(Image image) throws IOException;
+    void deleteImage(Post post) throws IOException;
 }

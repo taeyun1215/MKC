@@ -118,18 +118,24 @@ public class PostController {
 
     // 게시글 삭제
     @DeleteMapping("/delete/{post_id}")
-    public ResponseEntity<Post> deletePost(
-            @PathVariable("post_id") Long postId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-        User user = userDetails.getUser();
+    public ResponseEntity<ReturnObject> deletePost(
+//            @PathVariable("post_id") Long postId,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws IOException {
+//        User user = userDetails.getUser();
 
-        try {
-            postService.deletePost(postId, user);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (BusinessException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        Optional<User> userOptional = userRepo.findById(1L); // 삭제 예정.
+        User user = userOptional.get(); // 삭제 예정.
+        Long postId = 1L; // 삭제 예정.
+
+        Post post = postService.deletePost(postId, user);
+
+        ReturnObject object = ReturnObject.builder()
+                .msg("ok")
+                .data(post)
+                .build();
+
+        return ResponseEntity.ok().body(object);
 
     }
 

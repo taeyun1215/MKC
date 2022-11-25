@@ -83,13 +83,14 @@ public class ImageServiceImpl implements ImageService {
 
     // 이미지 삭제
     @Transactional
-    public void deleteImage(Image image) throws IOException {
-        // 기존 이미지 파일 삭제
-        String fileUploadUrl = fileService.getFullFileUploadPath(image.getImageName());
-        fileService.deleteFile(fileUploadUrl);
+    public void deleteImage(Post post) throws IOException {
+        List<Image> findImages = imageRepo.findByPost(post);
 
-        // 이미지 정보 초기화, entity 에서 처리.
-        image.initImageInfo();
+        for (Image findImage : findImages) {
+            if(StringUtils.hasText(findImage.getImageName())) {
+                fileService.deleteFile(findImage.getImageUrl()); // local 데이터 삭제
+            }
+        }
     }
 
 }
