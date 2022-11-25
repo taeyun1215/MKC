@@ -2,8 +2,8 @@ package com.mck.domain.useremail;
 
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserService;
-import com.mck.global.mail.EmailMessage;
-import com.mck.global.mail.EmailService;
+import com.mck.infra.mail.EmailMessage;
+import com.mck.infra.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

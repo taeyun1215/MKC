@@ -44,3 +44,7 @@ logging:
   level:
     org.springframework: debug
     web: debug
+
+file:
+  upload:
+    path: C:/Users/tylee/Desktop/image/

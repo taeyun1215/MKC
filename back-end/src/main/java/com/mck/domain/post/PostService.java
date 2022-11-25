@@ -4,6 +4,7 @@ import com.mck.domain.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -13,11 +14,11 @@ public interface PostService {
     List<Post> getPostAll();
 
     // DB에 게시글 저장.
-    Post registerPost(PostDto postDto, User user);
+    Post savePost(PostDto postDto, User user) throws IOException;
 
     // 게시글 수정.
-    Post editPost(Long postId, PostDto postDto, User user);
+    Post editPost(Long postId, PostDto postDto, User user) throws IOException;
 
     // 게시글 삭제
-    Post deletePost(Long postId, User user);
+    Post deletePost(Long postId, User user) throws IOException;
 }

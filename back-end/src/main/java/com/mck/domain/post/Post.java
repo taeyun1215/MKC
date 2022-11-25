@@ -1,7 +1,9 @@
 package com.mck.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mck.domain.base.BaseEntity;
 import com.mck.domain.comment.Comment;
+import com.mck.domain.image.Image;
 import com.mck.domain.postlike.PostLike;
 import com.mck.domain.user.User;
 import lombok.*;
@@ -50,13 +52,23 @@ public class Post {
     private User user;
 
     @OneToMany(
+            targetEntity = Image.class,
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    @OrderBy("id DESC")
+    @JsonBackReference //순환참조 방지
+    private List<Image> images; // 이미지
+
+    @OneToMany(
             targetEntity = Comment.class,
             mappedBy = "post",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     @OrderBy("id DESC")
-    private List<Comment> comment; // 댓글
+    private List<Comment> comments; // 댓글
 
     @OneToMany(
             targetEntity = PostLike.class,
@@ -65,4 +77,5 @@ public class Post {
             fetch = FetchType.LAZY
     )
     private List<PostLike> likes; // 좋아요
+
 }

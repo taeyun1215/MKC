@@ -1,11 +1,9 @@
-package com.mck.domain.role;
+package com.mck.domain.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RoleRepo extends JpaRepository<Role, Long> {
-
-    Role findByName(String name);
+public interface CommentRepo extends JpaRepository<Comment, Long> {
 
 }

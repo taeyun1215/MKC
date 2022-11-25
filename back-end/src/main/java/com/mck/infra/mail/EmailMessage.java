@@ -1,4 +1,4 @@
-package com.mck.global.mail;
+package com.mck.infra.mail;
 
 import lombok.Builder;
 import lombok.Data;
