@@ -34,7 +34,6 @@ public class PostController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    private final PostRepo postRepo; // 삭제 예정.
     private final UserRepo userRepo; // 삭제 예정.
 
     // 모든 게시글 가져오기.

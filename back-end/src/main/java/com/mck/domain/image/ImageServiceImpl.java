@@ -65,6 +65,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     // 이미지 업데이트
+    @Override
     @Transactional
     public void updateImage(List<MultipartFile> imageFiles, Post post) throws IOException {
 
@@ -82,6 +83,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     // 이미지 삭제
+    @Override
     @Transactional
     public void deleteImage(Post post) throws IOException {
         List<Image> findImages = imageRepo.findByPost(post);

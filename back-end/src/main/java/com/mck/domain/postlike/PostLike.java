@@ -29,6 +29,6 @@ public class PostLike {
             targetEntity = User.class,
             fetch = FetchType.LAZY
     )
-    @JoinColumn
+    @JoinColumn(name = "username")
     private User user;
 }
