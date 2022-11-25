@@ -1,5 +1,6 @@
 package com.mck.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mck.domain.base.BaseEntity;
 import com.mck.domain.comment.Comment;
 import com.mck.domain.image.Image;
@@ -57,6 +58,7 @@ public class Post {
             fetch = FetchType.LAZY
     )
     @OrderBy("id DESC")
+    @JsonBackReference //순환참조 방지
     private List<Image> images; // 이미지
 
     @OneToMany(
@@ -76,8 +78,4 @@ public class Post {
     )
     private List<PostLike> likes; // 좋아요
 
-    // Board에서 파일 처리 위함
-    public void addPhoto(Image image) {
-        this.images.add(image);
-    }
 }

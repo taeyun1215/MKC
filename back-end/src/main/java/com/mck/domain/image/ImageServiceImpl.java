@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -26,15 +27,20 @@ public class ImageServiceImpl implements ImageService {
     // 여러 파일을 나눠서 저장하기 위한 메소드.
     @Override
     @Transactional
-    public void saveImages(Post post, List<MultipartFile> imageFiles) throws IOException {
+    public List<Image> saveImages(Post post, List<MultipartFile> imageFiles) throws IOException {
+        List<Image> saveImageFiles = new ArrayList<>();
+
         for (MultipartFile imageFile : imageFiles) {
-            saveImage(post, imageFile);
+            Image saveImageFile = saveImage(post, imageFile);
+            saveImageFiles.add(saveImageFile);
         }
+
+        return saveImageFiles;
     }
 
     // 하나씩 파일을 나눠서 저장함.
     @Transactional
-    public void saveImage(Post post, MultipartFile imageFile) throws IOException {
+    public Image saveImage(Post post, MultipartFile imageFile) throws IOException {
 
         // fileService 에서 다 처리 해 뒀습니다.
         UploadFile uploadFile = fileService.storeFile(imageFile);
@@ -49,7 +55,8 @@ public class ImageServiceImpl implements ImageService {
                 .post(post)
                 .build();
 
-        imageRepo.save(image);
+        Image saveImage = imageRepo.save(image);
+        return saveImage;
     }
 
     // 이미지 순번대로 반환해주는 JPA
@@ -70,10 +77,7 @@ public class ImageServiceImpl implements ImageService {
             }
         }
 
-        // DB 데이터 삭제
         imageRepo.deleteByPost(post);
-
-        // DB 이미지 저장
         saveImages(post, imageFiles);
     }
 

@@ -1,5 +1,6 @@
 package com.mck.domain.post;
 
+import com.mck.domain.image.Image;
 import com.mck.domain.image.ImageService;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
@@ -44,8 +45,10 @@ public class PostServiceImpl implements PostService {
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
 
-        imageService.saveImages(savePost, postDto.getImageFiles());
+        List<Image> saveImageFiles = imageService.saveImages(savePost, postDto.getImageFiles());
         log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
+
+        savePost.setImages(saveImageFiles);
 
         return savePost;
     }
@@ -79,7 +82,6 @@ public class PostServiceImpl implements PostService {
         } else if (findPostIdAndUserId.isEmpty()) {
             throw new BusinessException(ErrorCode.NOT_EDIT_PERMISSION_POST);
         }
-
     }
 
     @Override
