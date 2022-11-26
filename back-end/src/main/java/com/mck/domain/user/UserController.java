@@ -49,7 +49,7 @@ public class UserController {
     private final SignUpFormValidator signUpFormValidator;
     private final PasswordEncoder passwordEncoder;
 
-    @InitBinder("signUpForm")
+    @InitBinder("userSignUpDto")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(signUpFormValidator);
     }

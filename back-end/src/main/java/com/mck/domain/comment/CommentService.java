@@ -9,4 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CommentService {
 
     Comment saveComment(Long postId, User user, CommentDto commentDto);
+
+    Comment saveReComment(Long postId, Long commentId, User user, CommentDto commentDto);
 }

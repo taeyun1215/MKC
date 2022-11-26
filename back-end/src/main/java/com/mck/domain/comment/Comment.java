@@ -7,11 +7,14 @@ import com.mck.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "comment")
 @Builder
 public class Comment extends BaseEntity {
 
@@ -32,6 +35,8 @@ public class Comment extends BaseEntity {
     )
     private String writer; // 작성자
 
+    private Long parentId; // 부모 댓글
+
     @ManyToOne(
             targetEntity = User.class,
             fetch = FetchType.LAZY
@@ -45,4 +50,5 @@ public class Comment extends BaseEntity {
     )
     @JsonManagedReference // 순환참조 방지
     private Post post;
+
 }
