@@ -15,11 +15,16 @@ public enum ErrorCode {
     MISMATCHED_ENTER_NICKNAME(401, "입력한 닉네임이 기존 닉네임이 일치하지 않습니다."),
 
     // 게시글
-    NOT_SAVE_POST(400, "글이 저장되지 않았습니다."),
-    NOT_EDIT_POST(400, "글이 수정되지 않았습니다."),
-    NOT_EXIST_POST(400, "글이 존재하지 않았습니다."),
-    NOT_EDIT_PERMISSION_POST(400, "글을 삭제할 권한이 없습니다."),
-    NOT_DELETE_PERMISSION_POST(400, "글을 삭제할 권한이 없습니다.");
+    NOT_SAVE_POST(400, "게시글이 저장되지 않았습니다."),
+    NOT_EDIT_POST(400, "게시글이 수정되지 않았습니다."),
+    NOT_EXIST_POST(400, "게시글이 존재하지 않았습니다."),
+    NOT_EDIT_PERMISSION_POST(400, "게시글이 삭제할 권한이 없습니다."),
+    NOT_DELETE_PERMISSION_POST(400, "게시글이 삭제할 권한이 없습니다."),
+
+    // 게시글
+    NOT_SAVE_COMMENT(400, "댓글이 저장되지 않았습니다."),
+    NOT_EDIT_COMMENT(400, "댓글이 수정되지 않았습니다."),
+    NOT_EXIST_COMMENT(400, "댓글이 존재하지 않았습니다.");
 
     ErrorCode(int status, String message) {
         this.status = status;

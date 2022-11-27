@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -23,6 +25,38 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepo commentRepo;
     private final PostRepo postRepo;
     private final UserRepo userRepo;
+
+    @Override
+    @Transactional
+    public List<Comment> getComments(Long postId) {
+        Optional<Post> findPost = Optional.ofNullable(postRepo.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST)));
+
+        List<Comment> comments = commentRepo.findByPostOrderByIdAsc(findPost.get());
+        List<Comment> headComments = new ArrayList<>(); // 부모 댓글
+        List<Comment> arrangeComments = new ArrayList<>(); // 정렬된 댓글
+
+        for (Comment comment : comments) {
+            if (comment.getParentId() == null) {
+                headComments.add(comment);
+            }
+        }
+
+        for (Comment headComment : headComments) {
+            arrangeComments.add(headComment);
+
+            for (Comment comment : comments) {
+                if (comment.getParentId() != null) {
+                    if (headComment.getId() == comment.getParentId()) {
+                        arrangeComments.add(comment);
+                    }
+                }
+            }
+        }
+
+        return arrangeComments;
+    }
+
 
     @Override
     @Transactional
@@ -56,6 +90,23 @@ public class CommentServiceImpl implements CommentService {
         log.info("새로운 대댓글 정보를 DB에 저장했습니다 : ", saveComment.getId());
 
         return saveComment;
+    }
+
+    @Override
+    @Transactional
+    public void updateComment(Long commentId, User user, CommentDto commentDto) {
+        User findUser = userRepo.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+
+        validateUpdateComment(commentId, findUser);
+    }
+
+    @Transactional
+    public void validateUpdateComment(Long commentId, User user) {
+        Optional<Comment> findComment = Optional.ofNullable(commentRepo.findById(commentId)
+                .orElseThrow(() -> new RuntimeException(ErrorCode.NOT_EXIST_COMMENT.getMessage())));
+
+        // todo : 댓글 수정 유효성 검사
     }
 
 }

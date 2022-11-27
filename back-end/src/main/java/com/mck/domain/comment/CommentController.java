@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -25,6 +26,12 @@ public class CommentController {
     private final CommentService commentService;
 
     private final UserRepo userRepo; // 삭제 예정.
+
+    // 게시글에 모든 댓글 불러오기
+    @GetMapping("{post_id}")
+    public ResponseEntity<List<Comment>> getComments(@PathVariable("post_id") Long postId) {
+        return ResponseEntity.ok().body(commentService.getComments(postId));
+    }
 
     // 댓글 추가
     @PostMapping("/new/{post_id}")
@@ -94,17 +101,39 @@ public class CommentController {
     }
 
 
-//    // 댓글 수정
-//    @PutMapping("/edit/{comment_id}")
-//    public ResponseEntity<ReturnObject> editComment(
-//            @PathVariable("comment_id") Long commentId,
-//            CommentDto commentDto, BindingResult bindingResult
-//    ) {
-//
-//    }
+    // 댓글 수정
+    @PutMapping("/edit/{comment_id}")
+    public ResponseEntity<ReturnObject> editComment(
+            @PathVariable("comment_id") Long commentId,
+            CommentDto commentDto, BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        // User user = userDetails.getUser();
+
+        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com");  // 삭제 예정.
+        User user = userOptional.get(); // 삭제 예정.
+
+        if (bindingResult.hasErrors()) {
+            ReturnObject object = ReturnObject.builder()
+                    .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
+                    .type(bindingResult.getFieldError().getCode())
+                    .build();
+
+            return ResponseEntity.badRequest().body(object);
+        } else {
+            commentService.updateComment(commentId, user, commentDto);
+
+            ReturnObject object = ReturnObject.builder()
+                    .msg("ok")
+                    .build();
+
+            return ResponseEntity.ok().body(object);
+        }
+
+    }
 //
 //    // 댓글 삭제
-//    @PutMapping("/delete/{comment_id}")
+//    @DeleteMapping("/delete/{comment_id}")
 //    public ResponseEntity<ReturnObject> deleteComment(
 //            @PathVariable("comment_id") Long commentId
 //    ) {

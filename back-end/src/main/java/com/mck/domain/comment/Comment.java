@@ -1,5 +1,6 @@
 package com.mck.domain.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mck.domain.base.BaseEntity;
 import com.mck.domain.post.Post;
@@ -7,8 +8,6 @@ import com.mck.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -42,6 +41,7 @@ public class Comment extends BaseEntity {
             fetch = FetchType.LAZY
     ) // 실제로 요청하는 순간 가져오기 위해 LAZY로 사용함.
     @JoinColumn(name = "username")
+    @JsonManagedReference // 순환참조 방지
     private User user;
 
     @ManyToOne(
