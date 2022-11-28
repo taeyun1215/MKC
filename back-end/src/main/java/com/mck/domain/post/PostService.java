@@ -21,4 +21,7 @@ public interface PostService {
 
     // 게시글 삭제
     void deletePost(Long postId, User user) throws IOException;
+
+    // 게시글 좋아요
+    void likePost(Long postId, User user);
 }

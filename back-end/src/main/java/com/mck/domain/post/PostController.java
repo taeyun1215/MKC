@@ -135,4 +135,25 @@ public class PostController {
 
     }
 
+    @PostMapping("like/{post_id}")
+    public ResponseEntity<ReturnObject> likePost(
+            @PathVariable("post_id") Long postId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+
+//        User user = userDetails.getUser();
+
+        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
+        User user = userOptional.get(); // 삭제 예정.
+
+        postService.likePost(postId, user);
+
+
+        ReturnObject object = ReturnObject.builder()
+                .msg("ok")
+                .build();
+
+        return ResponseEntity.ok().body(object);
+    }
+
 }

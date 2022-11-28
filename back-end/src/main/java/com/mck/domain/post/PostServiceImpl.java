@@ -2,6 +2,8 @@ package com.mck.domain.post;
 
 import com.mck.domain.image.Image;
 import com.mck.domain.image.ImageService;
+import com.mck.domain.postlike.PostLike;
+import com.mck.domain.postlike.PostLikeRepo;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.global.error.BusinessException;
@@ -25,6 +27,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepo postRepo;
     private final UserRepo userRepo;
+    private final PostLikeRepo postLikeRepo;
 
     private final ImageService imageService;
 
@@ -59,7 +62,7 @@ public class PostServiceImpl implements PostService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        validatePostEdit(postId, findUser); // 유효성 검사
+        validateEditPost(postId, findUser); // 유효성 검사
         postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
         log.info("게시글 정보를 업데이트 했습니다 : ", postDto.getTitle());
 
@@ -72,7 +75,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Transactional
-    public void validatePostEdit(Long postId, User findUser) {
+    public void validateEditPost(Long postId, User findUser) {
         Optional<Post> findPostId = postRepo.findById(postId);
         Optional<Post> findPostIdAndUserId = postRepo.findByIdAndUser(postId, findUser);
 
@@ -87,9 +90,9 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void deletePost(Long postId, User user) throws IOException {
         User findUser = userRepo.findById(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_DELETE_PERMISSION_POST.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        validatePostDelete(postId, findUser);  // 유효성 검사
+        validateDeletePost(postId, findUser);  // 유효성 검사
         Optional<Post> findPost = postRepo.findById(postId);
 
         imageService.deleteImage(findPost.get());
@@ -101,7 +104,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Transactional
-    public void validatePostDelete(Long postId, User findUser) {
+    public void validateDeletePost(Long postId, User findUser) {
         Optional<Post> findPostId = postRepo.findById(postId);
         Optional<Post> findPostIdAndUserId = postRepo.findByIdAndUser(postId, findUser);
 
@@ -111,4 +114,31 @@ public class PostServiceImpl implements PostService {
             throw new BusinessException(ErrorCode.NOT_DELETE_PERMISSION_POST);
         }
     }
+
+    @Override
+    @Transactional
+    public void likePost(Long postId, User user) {
+        User findUser = userRepo.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
+
+        Optional<PostLike> findPostLike = postLikeRepo.findByPostAndUser(findPost, findUser);
+
+        findPostLike.ifPresentOrElse(
+                postLike -> {
+                    postLikeRepo.delete(postLike);
+                },
+                () -> {
+                    PostLike savePostLike = PostLike.builder()
+                            .post(findPost)
+                            .user(findUser)
+                            .build();
+
+                    postLikeRepo.save(savePostLike);
+                }
+        );
+    }
+
 }

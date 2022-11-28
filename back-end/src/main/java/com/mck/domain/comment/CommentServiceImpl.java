@@ -29,10 +29,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public List<Comment> getComments(Long postId) {
-        Optional<Post> findPost = Optional.ofNullable(postRepo.findById(postId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST)));
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
-        List<Comment> comments = commentRepo.findByPostOrderByIdAsc(findPost.get());
+        List<Comment> comments = commentRepo.findByPostOrderByIdAsc(findPost);
         List<Comment> headComments = new ArrayList<>(); // 부모 댓글
         List<Comment> arrangeComments = new ArrayList<>(); // 정렬된 댓글
 
@@ -65,10 +65,10 @@ public class CommentServiceImpl implements CommentService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        Optional<Post> findPost = Optional.ofNullable(postRepo.findById(postId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST)));
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
-        Comment comment = commentDto.toEntity(findUser, findPost.get(), null);
+        Comment comment = commentDto.toEntity(findUser, findPost, null);
         Comment saveComment = commentRepo.save(comment);
 
         log.info("새로운 댓글 정보를 DB에 저장했습니다 : ", saveComment.getId());
@@ -82,10 +82,10 @@ public class CommentServiceImpl implements CommentService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
-        Optional<Post> findPost = Optional.ofNullable(postRepo.findById(postId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST)));
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
-        Comment reComment = reCommentDto.toEntity(findUser, findPost.get(), commentId);
+        Comment reComment = reCommentDto.toEntity(findUser, findPost, commentId);
         Comment saveComment = commentRepo.save(reComment);
         log.info("새로운 대댓글 정보를 DB에 저장했습니다 : ", saveComment.getId());
 
@@ -124,7 +124,6 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepo.delete(deleteComment.get());
         log.info("댓글을 삭제하였습니다 : ", commentId);
-
     }
 
     @Transactional
