@@ -55,7 +55,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post editPost(Long postId, PostDto postDto, User user) throws IOException {
+    public void editPost(Long postId, PostDto postDto, User user) throws IOException {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
@@ -69,7 +69,6 @@ public class PostServiceImpl implements PostService {
         imageService.updateImage(imageFiles, findPost.get());
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 
-        return postDto.toEntity(user);
     }
 
     @Transactional
@@ -86,7 +85,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post deletePost(Long postId, User user) throws IOException {
+    public void deletePost(Long postId, User user) throws IOException {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_DELETE_PERMISSION_POST.getMessage()));
 
@@ -99,7 +98,6 @@ public class PostServiceImpl implements PostService {
         postRepo.delete(findPost.get());
         log.info("게시글을 삭제하였습니다 : ", findPost.get().getTitle());
 
-        return findPost.get();
     }
 
     @Transactional

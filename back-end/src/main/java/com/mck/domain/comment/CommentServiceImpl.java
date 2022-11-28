@@ -99,14 +99,41 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         validateUpdateComment(commentId, findUser);
+
+        commentRepo.editComment(commentDto.getContent(), commentId);
+        log.info("댓글을 수정하였습니다 : ", commentDto.getContent());
     }
 
     @Transactional
     public void validateUpdateComment(Long commentId, User user) {
-        Optional<Comment> findComment = Optional.ofNullable(commentRepo.findById(commentId)
-                .orElseThrow(() -> new RuntimeException(ErrorCode.NOT_EXIST_COMMENT.getMessage())));
+        commentRepo.findById(commentId)
+                .orElseThrow(() -> new RuntimeException(ErrorCode.NOT_EXIST_COMMENT.getMessage()));
 
-        // todo : 댓글 수정 유효성 검사
+        commentRepo.findByIdAndUser(commentId, user)
+                .orElseThrow(() -> new RuntimeException(ErrorCode.NOT_EDIT_PERMISSION_COMMENT.getMessage()));
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long commentId, User user) {
+        User findUser = userRepo.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+
+        validateDeleteComment(commentId, findUser);
+        Optional<Comment> deleteComment = commentRepo.findById(commentId);
+
+        commentRepo.delete(deleteComment.get());
+        log.info("댓글을 삭제하였습니다 : ", commentId);
+
+    }
+
+    @Transactional
+    public void validateDeleteComment(Long commentId, User user) {
+        commentRepo.findById(commentId)
+                .orElseThrow(() -> new RuntimeException(ErrorCode.NOT_EXIST_COMMENT.getMessage()));
+
+        commentRepo.findByIdAndUser(commentId, user)
+                .orElseThrow(() -> new RuntimeException(ErrorCode.NOT_DELETE_PERMISSION_COMMENT.getMessage()));
     }
 
 }

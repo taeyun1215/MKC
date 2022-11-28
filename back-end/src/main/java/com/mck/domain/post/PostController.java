@@ -103,11 +103,10 @@ public class PostController {
 
             return ResponseEntity.badRequest().body(object);
         } else {
-            Post post = postService.editPost(postId, postDto, user);
+            postService.editPost(postId, postDto, user);
 
             ReturnObject object = ReturnObject.builder()
                     .msg("ok")
-                    .data(post)
                     .build();
 
             return ResponseEntity.ok().body(object);
@@ -126,11 +125,10 @@ public class PostController {
         User user = userOptional.get(); // 삭제 예정.
         Long postId = 1L; // 삭제 예정.
 
-        Post post = postService.deletePost(postId, user);
+        postService.deletePost(postId, user);
 
         ReturnObject object = ReturnObject.builder()
                 .msg("ok")
-                .data(post)
                 .build();
 
         return ResponseEntity.ok().body(object);

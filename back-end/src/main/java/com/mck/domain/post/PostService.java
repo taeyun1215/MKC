@@ -17,8 +17,8 @@ public interface PostService {
     Post savePost(PostDto postDto, User user) throws IOException;
 
     // 게시글 수정.
-    Post editPost(Long postId, PostDto postDto, User user) throws IOException;
+    void editPost(Long postId, PostDto postDto, User user) throws IOException;
 
     // 게시글 삭제
-    Post deletePost(Long postId, User user) throws IOException;
+    void deletePost(Long postId, User user) throws IOException;
 }

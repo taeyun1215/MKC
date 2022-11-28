@@ -21,4 +21,7 @@ public interface CommentService {
 
     // 댓글 수정
     void updateComment(Long commentId, User user, CommentDto commentDto);
+
+    // 댓글 삭제
+    void deleteComment(Long commentId, User user);
 }
