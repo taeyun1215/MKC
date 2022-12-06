@@ -40,6 +40,7 @@ public class Post {
     private String writer; // 작성자
 
     @Column(
+            columnDefinition = "integer default 0",
             nullable = false
     )
     private int view = 0; // 조회수

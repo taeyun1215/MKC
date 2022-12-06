@@ -24,4 +24,7 @@ public interface PostService {
 
     // 게시글 좋아요
     void likePost(Long postId, User user);
+
+    // 게시글 조회수
+    Post updateViewPost(Long postId);
 }

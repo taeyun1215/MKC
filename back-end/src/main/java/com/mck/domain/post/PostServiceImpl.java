@@ -141,4 +141,14 @@ public class PostServiceImpl implements PostService {
         );
     }
 
+    @Override
+    @Transactional
+    public Post updateViewPost(Long postId) {
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
+
+        postRepo.updateView(findPost.getId());
+        return findPost;
+    }
+
 }

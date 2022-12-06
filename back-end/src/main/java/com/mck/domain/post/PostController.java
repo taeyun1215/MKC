@@ -37,9 +37,37 @@ public class PostController {
     private final UserRepo userRepo; // 삭제 예정.
 
     // 모든 게시글 가져오기.
-    @GetMapping("/postAll")
+    @GetMapping("/all")
     public ResponseEntity<List<Post>> getPostAll() {
         return ResponseEntity.ok().body(postService.getPostAll());
+    }
+
+    // 게시글 상세 정보
+    @GetMapping("/read/{post_id}")
+    public ResponseEntity<ReturnObject> readPost(
+            @PathVariable("post_id") Long postId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+
+    ) {
+        User user = userDetails.getUser();
+        Post post = postService.updateViewPost(postId);
+
+        // 자기가 쓴 게시물을 자기가 본다면 수정, 삭제를 할 수 있게 해주는 부분.
+        if (post.getUser().getId() == user.getId()) {
+            ReturnObject object = ReturnObject.builder()
+                    .msg("ok")
+                    .data(post) // todo : writer = true로 두고 싶음.
+                    .build();
+
+            return ResponseEntity.ok().body(object);
+        }
+
+        ReturnObject object = ReturnObject.builder()
+                .msg("ok")
+                .data(post)
+                .build();
+
+        return ResponseEntity.ok().body(object);
     }
 
     // 게시글 추가
@@ -135,6 +163,7 @@ public class PostController {
 
     }
 
+    // 게시글 좋아요
     @PostMapping("like/{post_id}")
     public ResponseEntity<ReturnObject> likePost(
             @PathVariable("post_id") Long postId,

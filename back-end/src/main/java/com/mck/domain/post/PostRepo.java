@@ -20,4 +20,8 @@ public interface PostRepo extends JpaRepository<Post, Long> {
     @Query(value = "UPDATE post p SET p.title = :title, p.content = :content WHERE p.id = :id", nativeQuery = true)
     void editPost(@Param("title") String title, @Param("content") String content, @Param("id") Long id);
 
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE post p SET p.view = p.view + 1 WHERE p.id = :id", nativeQuery = true)
+    int updateView(@Param("id") Long id);
+
 }
