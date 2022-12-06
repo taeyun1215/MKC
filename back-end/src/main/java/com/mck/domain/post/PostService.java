@@ -1,6 +1,8 @@
 package com.mck.domain.post;
 
 import com.mck.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,4 +29,7 @@ public interface PostService {
 
     // 게시글 조회수
     Post updateViewPost(Long postId);
+
+    // 게시글 Paging
+    Page<Post> pagePostList(Pageable pageable);
 }

@@ -4,13 +4,15 @@ import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.domain.user.UserService;
 import com.mck.domain.user.dto.UserSignUpDto;
-import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
 import com.mck.global.service.UserDetailsImpl;
 import com.mck.global.utils.ReturnObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,13 +38,22 @@ public class PostController {
     private final PasswordEncoder passwordEncoder; // 삭제 예정.
     private final UserRepo userRepo; // 삭제 예정.
 
-    // 모든 게시글 가져오기.
+    // Paging 게시글, 10개씩.
     @GetMapping("/all")
-    public ResponseEntity<List<Post>> getPostAll() {
-        return ResponseEntity.ok().body(postService.getPostAll());
+    public ResponseEntity<ReturnObject> pagingPost(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<Post> posts = postService.pagePostList(pageable);
+
+        ReturnObject object = ReturnObject.builder()
+                .msg("ok")
+                .data(posts)
+                .build();
+
+        return ResponseEntity.ok().body(object);
     }
 
-    // 게시글 상세 정보
+    // 게시글 상세 정보 // todo : 쿠키나 세션을 이용하여 조회수 중복 카운터를 방지하기
     @GetMapping("/read/{post_id}")
     public ResponseEntity<ReturnObject> readPost(
             @PathVariable("post_id") Long postId,
@@ -53,10 +64,10 @@ public class PostController {
         Post post = postService.updateViewPost(postId);
 
         // 자기가 쓴 게시물을 자기가 본다면 수정, 삭제를 할 수 있게 해주는 부분.
-        if (post.getUser().getId() == user.getId()) {
+        if (post.getUser().getId().equals(user.getId())) {
             ReturnObject object = ReturnObject.builder()
                     .msg("ok")
-                    .data(post) // todo : writer = true로 두고 싶음.
+                    .data(post) // todo : writer = true 로 두고 싶음.
                     .build();
 
             return ResponseEntity.ok().body(object);

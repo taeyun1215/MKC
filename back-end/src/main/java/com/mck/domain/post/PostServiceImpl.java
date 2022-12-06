@@ -10,6 +10,8 @@ import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -148,7 +150,14 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
         postRepo.updateView(findPost.getId());
+        log.info("게시글을 조회했습니다.");
         return findPost;
+    }
+
+    @Override
+    @Transactional
+    public Page<Post> pagePostList(Pageable pageable) {
+        return postRepo.findAll(pageable);
     }
 
 }
