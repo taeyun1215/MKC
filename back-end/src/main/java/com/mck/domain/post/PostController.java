@@ -23,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,6 +43,22 @@ public class PostController {
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Post> posts = postService.pagePostList(pageable);
+
+        ReturnObject object = ReturnObject.builder()
+                .msg("ok")
+                .data(posts)
+                .build();
+
+        return ResponseEntity.ok().body(object);
+    }
+
+    // 게시글 검색
+    @PostMapping("search/{keyword}")
+    public ResponseEntity<ReturnObject> searchPost(
+            @PathVariable("keyword") String keyword,
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<Post> posts = postService.searchPost(keyword, pageable);
 
         ReturnObject object = ReturnObject.builder()
                 .msg("ok")

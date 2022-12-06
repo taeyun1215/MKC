@@ -12,6 +12,13 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public interface PostService {
+
+    // 게시글 Paging
+    Page<Post> pagePostList(Pageable pageable);
+
+    // 게시글 검색
+    Page<Post> searchPost(String keyword, Pageable pageable);
+
     // 게시글 전체 반환.
     List<Post> getPostAll();
 
@@ -30,6 +37,5 @@ public interface PostService {
     // 게시글 조회수
     Post updateViewPost(Long postId);
 
-    // 게시글 Paging
-    Page<Post> pagePostList(Pageable pageable);
+
 }

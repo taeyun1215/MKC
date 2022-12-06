@@ -35,6 +35,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public Page<Post> pagePostList(Pageable pageable) {
+        return postRepo.findAll(pageable);
+    }
+
+    @Override
+    @Transactional
+    public Page<Post> searchPost(String keyword, Pageable pageable) {
+        return postRepo.findAllSearch(keyword, pageable);
+    }
+
+    @Override
+    @Transactional
     public List<Post> getPostAll() {
         log.info("모든 게시글을 가져옵니다.");
         return postRepo.findAll();
@@ -154,10 +166,5 @@ public class PostServiceImpl implements PostService {
         return findPost;
     }
 
-    @Override
-    @Transactional
-    public Page<Post> pagePostList(Pageable pageable) {
-        return postRepo.findAll(pageable);
-    }
 
 }
