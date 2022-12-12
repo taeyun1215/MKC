@@ -47,7 +47,6 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final SignUpFormValidator signUpFormValidator;
-    private final PasswordEncoder passwordEncoder;
 
     @InitBinder("userSignUpDto")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -71,7 +70,7 @@ public class UserController {
                     .build();
             return ResponseEntity.badRequest().body(object);
         } else {
-            User user = userSignUpDto.toEntity(passwordEncoder);
+            User user = userService.newUser(userSignUpDto);
             User saveUser = userService.saveUser(user);
 
             ReturnObject object = ReturnObject.builder()
