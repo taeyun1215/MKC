@@ -1,62 +1,49 @@
 package com.mck.domain.user;
 
-import com.mck.domain.base.BaseEntity;
 import com.mck.domain.role.Role;
 import lombok.*;
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static javax.persistence.GenerationType.AUTO;
+
 @Entity
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class User extends BaseEntity{
+public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = AUTO)
     private Long id;
 
-    @Column(
-            length = 100,
-            nullable = false,
-            unique = true
-    )
+    @Size(min=2, max=12)
+    @Column(nullable = false, unique = true)
     private String nickname; // 닉네임
 
-    @Column(
-            length = 50,
-            nullable = false,
-            unique = true
-    )
-    private String username; // 아이디
+    @Size(min=5, max=15)
+    @Column(nullable = false, unique = true)
+    private String username;
 
-    @Column(
-            length = 200,
-            nullable = false
-    )
-    private String password; // 비밀번호
+    @Size(min=8)
+    @Column(nullable = false, unique = true)
+    private String password;
 
-    @Column(
-            length = 50,
-            nullable = false,
-            unique = true
-    )
-    private String email; // 이메일
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Size(max=30)
+    private Collection<Role> roles = new ArrayList<>();
 
+    @Size(max=100)
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Size(max=100)
+    @Column(nullable = false, unique = true)
     private boolean emailVerified; // 이메일 인증 여부
 
     private LocalDateTime joinedAt; // 로그인한 시간
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "name", referencedColumnName = "name")}
-    )
-    private Collection<Role> roles = new ArrayList<>();  // todo : 권한은 하나만 주는 걸로 해도 되지 않은가?
 
     // 회원가입 완료 처리
     public void completeSignUp() {

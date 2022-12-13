@@ -3,6 +3,7 @@ package com.mck.domain.postlike;
 import com.mck.domain.post.Post;
 import com.mck.domain.user.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

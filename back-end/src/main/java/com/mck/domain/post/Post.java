@@ -40,6 +40,7 @@ public class Post {
     private String writer; // 작성자
 
     @Column(
+            columnDefinition = "integer default 0",
             nullable = false
     )
     private int view = 0; // 조회수
@@ -68,6 +69,7 @@ public class Post {
             fetch = FetchType.LAZY
     )
     @OrderBy("id DESC")
+    @JsonBackReference //순환참조 방지
     private List<Comment> comments; // 댓글
 
     @OneToMany(

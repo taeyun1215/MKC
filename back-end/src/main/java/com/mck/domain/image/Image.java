@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "image")
 @Getter
 public class Image {

@@ -1,13 +1,14 @@
 package com.mck.domain.user;
 
 import com.mck.domain.role.Role;
+import com.mck.domain.user.dto.UserSignUpDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public interface UserService {
     // DB에 유저정보 저장
     User saveUser(User user);
@@ -21,10 +22,11 @@ public interface UserService {
     // 특정유저 정보 가져오기
     User getUser(String username);
 
-    // 모든 유저 정보 가져오기
-    List<User> getUsers();
-
     // 유저 정보 삭제
     void deleteUser(String username);
+
+    // 유저 정보 생성
+    User newUser(UserSignUpDto userSignUpDto);
+
 
 }
