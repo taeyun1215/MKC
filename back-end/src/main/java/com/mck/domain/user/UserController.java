@@ -9,14 +9,15 @@ import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
+import com.mck.global.error.ErrorCode;
 import com.mck.infra.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
 import com.mck.global.utils.SignUpFormValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -30,7 +31,6 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -53,21 +53,30 @@ public class UserController {
         webDataBinder.addValidators(signUpFormValidator);
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
-    }
-
     // 유저 등록
     @PostMapping("/user")
     public ResponseEntity<ReturnObject> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+
+        if (!StringUtils.equals(userSignUpDto.getPassword(), userSignUpDto.getConfirmPassword())) {
+            log.error("검증실패");
+
+            ReturnObject object = ReturnObject.builder()
+                    .msg("비밀번호와 비밀번호 확인이 일치하지 않습니다.")
+                    .type(ErrorCode.MISMATCHED_PASSWORD.getMessage())
+                    .build();
+
+            return ResponseEntity.badRequest().body(object);
+        }
+
         if (errors.hasErrors()) {
             System.out.println("검증실패");
+
             ReturnObject object = ReturnObject.builder()
                     .msg(errors.getFieldError().getDefaultMessage())
                     .type(errors.getFieldError().getCode())
                     .build();
+
             return ResponseEntity.badRequest().body(object);
         } else {
             User user = userService.newUser(userSignUpDto);
@@ -81,6 +90,7 @@ public class UserController {
         }
     }
 
+    // 새로운 권한 생성
     @PostMapping("/role")
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
@@ -106,8 +116,8 @@ public class UserController {
                         // 토큰 이름
                         .withSubject(user.getUsername())
                         // 토큰 만료일
-                        // 10분
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                        // 30분
+                        .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                         // 토큰 발행자
                         .withIssuer(request.getRequestURI().toString())
                         // 토큰 payload 작성

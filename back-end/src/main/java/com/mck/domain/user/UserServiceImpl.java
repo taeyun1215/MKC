@@ -52,12 +52,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers() {
-        log.info("모든 유저 정보를 가져옵니다.");
-        return userRepo.findAll();
-    }
-
-    @Override
     public void deleteUser(String username) {
         log.info("사용자 {} 를 삭제하였습니다.", username);
         userRepo.deleteByUsername(username);

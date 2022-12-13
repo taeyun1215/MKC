@@ -22,9 +22,6 @@ public interface UserService {
     // 특정유저 정보 가져오기
     User getUser(String username);
 
-    // 모든 유저 정보 가져오기
-    List<User> getUsers();
-
     // 유저 정보 삭제
     void deleteUser(String username);
 

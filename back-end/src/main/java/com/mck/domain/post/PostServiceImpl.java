@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Page<Post> searchPost(String keyword, Pageable pageable) {
-        return postRepo.findAllSearch(keyword, pageable);
+        return null; // postRepo.findAllSearch(keyword, pageable);
     }
 
     @Override

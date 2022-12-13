@@ -106,16 +106,7 @@ public class PostController {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
 //        User user = userDetails.getUser();
 
-        UserSignUpDto userSignUpDto = new UserSignUpDto(
-                "devty1215",
-                "gp",
-                "qwer123!@#",
-                "qwer123!@#",
-                "taeyun1215@naver.com"
-        ); // 삭제 예정.
-
-        User userEntity = userSignUpDto.toEntity(passwordEncoder); // 삭제 예정.
-        User user = userService.saveUser(userEntity); // 삭제 예정.
+        User user = userService.getUser("ghkwon4274"); // 삭제 예정
 
         if (bindingResult.hasErrors()) {
             ReturnObject object = ReturnObject.builder()
