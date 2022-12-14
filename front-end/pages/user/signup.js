@@ -9,7 +9,7 @@ import * as yup from "yup";
 export default function signup() {
   // 회원가입 정보 유효성 검사 및 에러 메시지 출력
   const formSchema = yup.object({
-    id: yup
+    username: yup
       .string()
       .required("아이디는 필수 입력 정보입니다")
       .matches(
@@ -33,10 +33,10 @@ export default function signup() {
         /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[,./;'<>?:"~!@#$%^&*()])[a-zA-Z0-9,./;'<>?:"~!@#$%^&*()]{8,20}$/,
         "영문, 숫자, 특수문자 포함 8자리를 입력해주세요."
       ),
-    passwordConfirm: yup
+      confirmPassword: yup
       .string()
       .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
-    name: yup.string().required("닉네임은 필수 입력 정보입니다"),
+      nickname: yup.string().required("닉네임은 필수 입력 정보입니다"),
   });
 
   const {
@@ -46,10 +46,14 @@ export default function signup() {
   } = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
 
   // 회원가입 정보 제출
-  const onSubmit = (data) => {
-    console.log("data", data);
-  };
+  const onSubmit = async (data) => {
 
+    await axios.post("http://193.123.230.252:8080/api/user", data)
+    .then((res) => console.log(res));
+    
+  };
+  
+    
   return (
     <div className="sign">
       <div className="sign_title">
@@ -57,11 +61,11 @@ export default function signup() {
         <span>조직문화의 개선과 소통을 위해 지금 시작해보세요</span>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="sign_contents">
-        <label htmlFor="id">아이디</label>
+        <label htmlFor="username">아이디</label>
         <input
-          name="id"
+          name="username"
           type="text"
-          {...register("id")}
+          {...register("username")}
           placeholder="아이디를 입력해주세요"
           autoComplete="off"
         />
@@ -74,19 +78,19 @@ export default function signup() {
           placeholder="비밀번호를 입력해주세요 (8 ~ 20자의 영문, 숫자, 특수문자 조합)"
         />
         {errors.password && <p>{errors.password.message}</p>}
-        <label htmlFor="passwordConfirm">비밀번호 확인</label>
+        <label htmlFor="confirmPassword">비밀번호 확인</label>
         <input
-          name="passwordConfirm"
+          name="confirmPassword"
           type="password"
-          {...register("passwordConfirm")}
+          {...register("confirmPassword")}
           placeholder="비밀번호를 한 번 더 입력해주세요"
         />
         {errors.passwordConfirm && <p>{errors.passwordConfirm.message}</p>}
-        <label htmlFor="name">닉네임</label>
+        <label htmlFor="nickname">닉네임</label>
         <input
-          name="name"
+          name="nickname"
           type="text"
-          {...register("name")}
+          {...register("nickname")}
           placeholder="닉네임을 입력해주세요"
           autoComplete="off"
         />

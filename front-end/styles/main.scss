@@ -1,8 +1,13 @@
 @import "./user/sign.scss";
+@import "./board/post.scss";
 @import "./layout/header.scss";
+
 html,
 body {
   padding: 0;
   margin: 0;
+}
+
+body *{
   font-family: "Noto Sans KR", sans-serif;
 }
