@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../asset/images/logo.png";
 import Image from "next/image";
@@ -33,10 +32,10 @@ export default function signup() {
         /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[,./;'<>?:"~!@#$%^&*()])[a-zA-Z0-9,./;'<>?:"~!@#$%^&*()]{8,20}$/,
         "영문, 숫자, 특수문자 포함 8자리를 입력해주세요."
       ),
-      confirmPassword: yup
+    confirmPassword: yup
       .string()
       .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
-      nickname: yup.string().required("닉네임은 필수 입력 정보입니다"),
+    nickname: yup.string().required("닉네임은 필수 입력 정보입니다"),
   });
 
   const {
@@ -47,13 +46,11 @@ export default function signup() {
 
   // 회원가입 정보 제출
   const onSubmit = async (data) => {
-
-    await axios.post("http://193.123.230.252:8080/api/user", data)
-    .then((res) => console.log(res));
-    
+    await axios
+      .post("http://193.123.230.252:8080/api/user", data)
+      .then((res) => console.log(res));
   };
-  
-    
+
   return (
     <div className="sign">
       <div className="sign_title">

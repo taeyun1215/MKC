@@ -6,13 +6,67 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  img {
+  .heaeder_logo {
     width: 7rem;
-    height: 3rem;
+    height: 3.5rem;
   }
-  span {
-    color: $main_color;
-    font-weight: 700;
+  .header_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    .header_search {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+
+      button {
+        width: 40px;
+        height: 100%;
+        position: absolute;
+        right: 0;
+        background-color: $main_color;
+        border: 0;
+        padding: 0;
+      }
+      img {
+        width: 25px;
+        height: 25px;
+      }
+      input {
+        width: 350px;
+        height: 30px;
+        padding-left: 10px;
+        border: 1px solid $main_color;
+        // border-radius: 10px;
+      }
+    }
+  }
+  .header_signBtn {
+    gap: 20px;
     cursor: pointer;
+
+    .header_write {
+      background-color: $main_color;
+      border: 0;
+      border-radius: 20px;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 15px;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+    .header_signin {
+      color: $main_color;
+      cursor: pointer;
+      background-color: transparent;
+      border: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
   }
 }
