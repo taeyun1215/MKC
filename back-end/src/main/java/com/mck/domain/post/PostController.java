@@ -3,7 +3,6 @@ package com.mck.domain.post;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.domain.user.UserService;
-import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.global.error.ErrorCode;
 import com.mck.global.service.UserDetailsImpl;
 import com.mck.global.utils.ReturnObject;
@@ -68,7 +67,7 @@ public class PostController {
         return ResponseEntity.ok().body(object);
     }
 
-    // 게시글 상세 정보 // todo : 쿠키나 세션을 이용하여 조회수 중복 카운터를 방지하기
+    // 게시글 상세 정보 todo : 쿠키나 세션을 이용하여 조회수 중복 카운터를 방지하기
     @GetMapping("/read/{post_id}")
     public ResponseEntity<ReturnObject> readPost(
             @PathVariable("post_id") Long postId,
@@ -100,13 +99,11 @@ public class PostController {
     @PostMapping("/new")
     public ResponseEntity<ReturnObject> savePost(
             @Validated @ModelAttribute("postDto") PostDto postDto,
-            BindingResult bindingResult
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
-//        User user = userDetails.getUser();
-
-        User user = userService.getUser("ghkwon4274"); // 삭제 예정
+        User user = userDetails.getUser();
 
         if (bindingResult.hasErrors()) {
             ReturnObject object = ReturnObject.builder()
@@ -193,7 +190,6 @@ public class PostController {
         User user = userOptional.get(); // 삭제 예정.
 
         postService.likePost(postId, user);
-
 
         ReturnObject object = ReturnObject.builder()
                 .msg("ok")

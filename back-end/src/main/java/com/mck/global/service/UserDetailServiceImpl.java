@@ -37,6 +37,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         user.getRoles().forEach(role -> {authorities.add(new SimpleGrantedAuthority(role.getName()));});
 
         // 동일한 이름의 User 메소드를 이미 import 해둬서 패키지명까지 써서 사용
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        // return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        return new UserDetailsImpl(user);
     }
 }

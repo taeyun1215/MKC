@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Page<Post> searchPost(String keyword, Pageable pageable) {
-        return null; // postRepo.findAllSearch(keyword, pageable);
+        return postRepo.findAllSearch(keyword, pageable);
     }
 
     @Override
@@ -141,9 +141,11 @@ public class PostServiceImpl implements PostService {
         Optional<PostLike> findPostLike = postLikeRepo.findByPostAndUser(findPost, findUser);
 
         findPostLike.ifPresentOrElse(
+                // 존재한다면 좋아요를 취소하기 위해 삭제.
                 postLike -> {
                     postLikeRepo.delete(postLike);
                 },
+                // 없다면 좋아요를 누르기 위해 저장.
                 () -> {
                     PostLike savePostLike = PostLike.builder()
                             .post(findPost)

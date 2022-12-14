@@ -39,8 +39,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Size(max=100)
-    @Column(nullable = false, unique = true)
     private boolean emailVerified; // 이메일 인증 여부
 
     private LocalDateTime joinedAt; // 로그인한 시간
