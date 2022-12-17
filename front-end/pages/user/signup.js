@@ -46,9 +46,18 @@ export default function signup() {
 
   // 회원가입 정보 제출
   const onSubmit = async (data) => {
-    await axios
-      .post("http://193.123.230.252:8080/api/user", data)
-      .then((res) => console.log(res));
+    try {
+      await axios
+        .post("http://193.123.230.252:8080/api/user", data)
+        .then((res) => {
+          if (res.data.msg === "OK") {
+            alert("회원가입 되었습니다. 다시 로그인 해주십시오.");
+          }
+        });
+    } catch (e) {
+      console.log(e);
+      alert("회원가입에 실패했습니다. 잠시 후 다시 시도해 주십시오.");
+    }
   };
 
   return (
