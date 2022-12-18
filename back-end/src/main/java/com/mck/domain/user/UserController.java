@@ -10,6 +10,7 @@ import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
 import com.mck.global.error.ErrorCode;
+import com.mck.infra.mail.EmailMessage;
 import com.mck.infra.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
 import com.mck.global.utils.SignUpFormValidator;
@@ -23,6 +24,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +50,7 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final SignUpFormValidator signUpFormValidator;
+    private final TemplateEngine templateEngine;
 
     @InitBinder("userSignUpDto")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -205,6 +209,42 @@ public class UserController {
 
         return ResponseEntity.ok().body(object);
 
+    }
+
+    // 사용자 id 찾기
+    // 이메일을 입력하면 해당 이메일로 가입된 계정을 찾고 계정이 존재하면 입력한 이메일로 아이디 전달
+    @GetMapping("/username")
+    public ResponseEntity<ReturnObject> findUsername(String email){
+        User result = userService.checkUserEmail(email);
+        if (result != null){
+            Context context = new Context();
+            context.setVariable("link", "/api/username");
+            context.setVariable("username", result.getUsername());
+            String message = templateEngine.process("mail/findUsernameForm", context);
+
+            EmailMessage emailMessage = EmailMessage.builder()
+                    .to(email)
+                    .subject("MCK 프로젝트, 아이디 찾기")
+                    .message(message)
+                    .build();
+
+            emailService.sendEmail(emailMessage);
+
+            ReturnObject object = ReturnObject.builder()
+                    .msg("ok").build();
+
+            return ResponseEntity.ok().body(object);
+
+        } else{
+            log.error("해당 이메일로 가입된 계정을 찾을 수 없습니다.");
+
+            ReturnObject object = ReturnObject.builder()
+                    .msg("해당 이메일로 가입된 계정을 찾을 수 없습니다.")
+                    .type("invalid.email")
+                    .build();
+
+            return ResponseEntity.badRequest().body(object);
+        }
     }
 
 }
