@@ -141,3 +141,28 @@
     color: grey;
   }
 }
+
+.signupComplete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  img {
+    width: 12rem;
+    height: 6rem;
+  }
+  span {
+    color: grey;
+  }
+  button {
+    width: 22rem;
+    height: 2.5rem;
+    border: 0;
+    color: white;
+    background-color: $main_color;
+    font-size: 18px;
+    margin-top: 70px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+}

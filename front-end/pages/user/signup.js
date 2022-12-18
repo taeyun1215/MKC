@@ -4,8 +4,11 @@ import Image from "next/image";
 import axios from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useRouter } from "next/router";
 
 export default function signup() {
+  const router = useRouter();
+
   // 회원가입 정보 유효성 검사 및 에러 메시지 출력
   const formSchema = yup.object({
     username: yup
@@ -46,12 +49,17 @@ export default function signup() {
 
   // 회원가입 정보 제출
   const onSubmit = async (data) => {
+    console.log(data);
     try {
       await axios
         .post("http://193.123.230.252:8080/api/user", data)
         .then((res) => {
           if (res.data.msg === "OK") {
-            alert("회원가입 되었습니다. 다시 로그인 해주십시오.");
+            router.push("/user/signupComplete");
+          } else if (res.data.msg === "이미 사용중인 아이디 입니다.") {
+            alert("이미 사용중인 아이디 입니다.");
+          } else {
+            alert("회원가입에 실패했습니다. 잠시 후 다시 시도해 주십시오.");
           }
         });
     } catch (e) {
