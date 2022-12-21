@@ -23,7 +23,7 @@ public interface PostService {
     List<Post> getPostAll();
 
     // DB에 게시글 저장.
-    Post savePost(PostDto postDto, User user) throws IOException;
+    Post savePost(PostDto postDto, String username) throws IOException;
 
     // 게시글 수정.
     void editPost(Long postId, PostDto postDto, User user) throws IOException;

@@ -1,5 +1,10 @@
 package com.mck.domain.post;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.domain.user.UserService;
@@ -20,9 +25,17 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequiredArgsConstructor
@@ -100,28 +113,53 @@ public class PostController {
     public ResponseEntity<ReturnObject> savePost(
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            HttpServletRequest request,
+            HttpServletResponse response
     ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
-        User user = userDetails.getUser();
 
-        if (bindingResult.hasErrors()) {
-            ReturnObject object = ReturnObject.builder()
-                    .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
-                    .type(bindingResult.getFieldError().getCode())
-                    .build();
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String token = authorizationHeader.substring("Bearer ".length());
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                String username = decodedJWT.getSubject();
 
-            return ResponseEntity.badRequest().body(object);
-        } else {
-            Post post = postService.savePost(postDto, user);
+                if (bindingResult.hasErrors()) {
+                    ReturnObject object = ReturnObject.builder()
+                            .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
+                            .type(bindingResult.getFieldError().getCode())
+                            .build();
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
-                    .data(post)
-                    .build();
+                    return ResponseEntity.badRequest().body(object);
+                } else {
+                    Post post = postService.savePost(postDto, username);
 
-            return ResponseEntity.created(uri).body(object);
+                    ReturnObject object = ReturnObject.builder()
+                            .msg("ok")
+                            .data(post)
+                            .build();
+
+                    return ResponseEntity.created(uri).body(object);
+                }
+
+            } catch (Exception e) {
+                response.setHeader("error", e.getMessage());
+                response.setStatus(FORBIDDEN.value());
+                Map<String, String> error = new HashMap<>();
+                error.put("error_message", e.getMessage());
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), error);
+            }
         }
+
+        ReturnObject object = ReturnObject.builder()
+                .msg("요청 처리에 필요한 토큰값이 없습니다.")
+                .build();
+
+        return ResponseEntity.badRequest().body(object);
     }
 
     // 게시글 수정

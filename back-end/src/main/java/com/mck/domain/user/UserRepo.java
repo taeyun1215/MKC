@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<User, Long> {
 
     // by gh
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username); // Optional로 묶었습니다. 태윤M
     boolean existsByUsername(String username);
     void deleteByUsername(String username);
 
