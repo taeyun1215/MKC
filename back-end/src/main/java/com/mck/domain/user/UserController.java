@@ -150,8 +150,9 @@ public class UserController {
 
     // 회원탈퇴
     @DeleteMapping("/user")
-    public void deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<ReturnObject> deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        ReturnObject object;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String token = authorizationHeader.substring("Bearer ".length());
@@ -160,17 +161,28 @@ public class UserController {
                 DecodedJWT decodedJWT = verifier.verify(token);
                 String username = decodedJWT.getSubject();
                 userService.deleteUser(username);
+
+                object = ReturnObject.builder()
+                        .msg("ok")
+                        .build();
+
             } catch (Exception e) {
-                response.setHeader("error", e.getMessage());
-                response.setStatus(FORBIDDEN.value());
-                Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                object = ReturnObject.builder()
+                        .msg(e.getMessage())
+                        .type(APPLICATION_JSON_VALUE)
+                        .build();
+
+                return ResponseEntity.status(FORBIDDEN.value()).body(object);
             }
         } else {
-            throw new RuntimeException("요청 처리에 필요한 토큰값이 없습니다.");
+            object = ReturnObject.builder()
+                    .msg("토큰이 없거나 올바르지 않은 토큰입니다.")
+                    .type("invalid.token")
+                    .build();
+            return ResponseEntity.badRequest().body(object);
         }
+
+        return ResponseEntity.ok().body(object);
     }
 
     // 인증 메일 확인
@@ -214,7 +226,7 @@ public class UserController {
     // 사용자 id 찾기
     // 이메일을 입력하면 해당 이메일로 가입된 계정을 찾고 계정이 존재하면 입력한 이메일로 아이디 전달
     @GetMapping("/username")
-    public ResponseEntity<ReturnObject> findUsername(String email){
+    public ResponseEntity<ReturnObject> findUsername(@RequestParam String email){
         User result = userService.checkUserEmail(email);
         if (result != null){
             Context context = new Context();
