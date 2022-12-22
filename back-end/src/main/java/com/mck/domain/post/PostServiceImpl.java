@@ -55,8 +55,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public Post savePost(PostDto postDto, String username) throws IOException {
-        User findUser = userRepo.findByUsername(username) // 스프링으로 로그인한 회원을 가져오지만 한번 더 DB에 있는지 조회함.
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+        User findUser = userRepo.findByUsername(username);
 
         Post post = postDto.toEntity(findUser);
         Post savePost = postRepo.save(post);
