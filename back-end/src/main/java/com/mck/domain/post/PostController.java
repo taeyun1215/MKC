@@ -19,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +44,6 @@ public class PostController {
 
     private final PostService postService;
 
-    private final UserService userService; // 삭제 예정.
-    private final PasswordEncoder passwordEncoder; // 삭제 예정.
     private final UserRepo userRepo; // 삭제 예정.
 
     // Paging 게시글, 10개씩.
