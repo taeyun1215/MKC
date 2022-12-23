@@ -1,6 +1,8 @@
 # Amazon JDK11 사용
 FROM amazoncorretto:11
 
+VOLUME /tmp
+
 # JAR_FILE 변수에 값을 저장
 ARG JAR_FILE=build/libs/*.jar
 
