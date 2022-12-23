@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
@@ -59,7 +61,7 @@ public class UserController {
 
     // 유저 등록
     @PostMapping("/user")
-    public ResponseEntity<ReturnObject> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, Errors errors) {
+    public ResponseEntity<ReturnObject> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
 
         if (!StringUtils.equals(userSignUpDto.getPassword(), userSignUpDto.getConfirmPassword())) {
@@ -86,9 +88,42 @@ public class UserController {
             User user = userService.newUser(userSignUpDto);
             User saveUser = userService.saveUser(user);
 
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userSignUpDto.getUsername(), userSignUpDto.getPassword());
+
+            // 토큰 서명용 키 생성
+            Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+            // 최초 접속시 발급하는 토큰
+            String access_token = JWT.create()
+                    // 토큰 이름
+                    .withSubject(user.getUsername())
+                    // 토큰 만료일
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                    // .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 1000))
+                    // 토큰 발행자
+                    .withIssuer(request.getRequestURI().toString())
+                    // 토큰 payload 작성
+                    .withClaim("roles", authenticationToken.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                    // 토큰 서명
+                    .sign(algorithm);
+
+            // access_token을 재발급 받을 수 있는 토큰
+            String refresh_token = JWT.create()
+                    // 토큰 이름
+                    .withSubject(user.getUsername())
+                    // 토큰 만료일
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                    // 토큰 발행자
+                    .withIssuer(request.getRequestURI().toString())
+                    // 토큰 서명
+                    .sign(algorithm);
+
+            Map<String, String> token = new HashMap<>();
+            token.put("access_token", access_token);
+            token.put("refresh_token", refresh_token);
+
             ReturnObject object = ReturnObject.builder()
                     .msg("ok")
-                    .data(saveUser).build();
+                    .data(token).build();
 
             return ResponseEntity.created(uri).body(object);
         }

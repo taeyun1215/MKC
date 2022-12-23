@@ -3,6 +3,7 @@ package com.mck.global.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mck.domain.user.UserRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,10 +31,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     // 유저 인증을 담당할 인터페이스
     private final AuthenticationManager authenticationManager;
+    private final UserRepo userRepo;
 
     // 원하는 시점에서 로그인 하기위해 authenticationManager를 외부에서 주입받음
-    public CustomAuthenticationFilter(AuthenticationManager authenticationManager){
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, UserRepo userRepo){
         this.authenticationManager = authenticationManager;
+        this.userRepo = userRepo;
     }
 
     // 유저 인증
@@ -82,9 +85,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 // 토큰 서명
                 .sign(algorithm);
 
+        com.mck.domain.user.User userDetail = userRepo.findByUsername(user.getUsername());
+
         Map<String, String> token = new HashMap<>();
         token.put("access_token", access_token);
         token.put("refresh_token", refresh_token);
+        token.put("emailVerified", String.valueOf(userDetail.isEmailVerified()));
+        token.put("nickname", userDetail.getNickname());
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), token);
     }

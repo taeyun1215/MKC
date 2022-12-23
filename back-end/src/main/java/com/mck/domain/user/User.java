@@ -50,4 +50,7 @@ public class User {
         this.joinedAt = LocalDateTime.now();
     }
 
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
 }
