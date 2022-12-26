@@ -2,26 +2,37 @@ import "../styles/main.scss";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import AppLayout from "../component/AppLayout";
-import { Provider } from "react-redux";
+import { QueryClient, QueryClientProvider, Hydrate } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
-function MyApp({ Component, pageProps, store }) {
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+function MyApp({ Component, pageProps }) {
   const router = useRouter();
   return (
     <>
-      <Head>
-        <title>YEH</title>
-      </Head>
-      {router.pathname == "/user/signin" ||
-      router.pathname === "/user/signup" ||
-      router.pathname === "/user/signupComplete" ? (
-        // <Provider store={store}>
-        <Component {...pageProps} />
-      ) : (
-        // </Provider>
-        <AppLayout>
+      <QueryClientProvider client={client}>
+        <Head>
+          <title>YEH</title>
+        </Head>
+        {router.pathname == "/user/signin" ||
+        router.pathname === "/user/signup" ||
+        router.pathname === "/user/signupComplete" ? (
+          // <Provider store={store}>
           <Component {...pageProps} />
-        </AppLayout>
-      )}
+        ) : (
+          // </Provider>
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
+        )}
+      </QueryClientProvider>
     </>
   );
 }

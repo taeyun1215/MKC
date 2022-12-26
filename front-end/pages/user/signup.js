@@ -5,8 +5,9 @@ import axios from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useRouter } from "next/router";
+import cookie from "react-cookies";
 
-export default function signup() {
+export default function Signup() {
   const router = useRouter();
 
   // 회원가입 정보 유효성 검사 및 에러 메시지 출력
@@ -49,12 +50,13 @@ export default function signup() {
 
   // 회원가입 정보 제출
   const onSubmit = async (data) => {
-    console.log(data);
     try {
       await axios
-        .post("http://193.123.230.252:8080/api/user", data)
+        .post("http://130.162.159.231:8080/api/user", data)
         .then((res) => {
-          if (res.data.msg === "OK") {
+          if (res.data.msg === "ok") {
+            const token = res.data.data.access_token;
+            cookie.save("userToken", token);
             router.push("/user/signupComplete");
           } else if (res.data.msg === "이미 사용중인 아이디 입니다.") {
             alert("이미 사용중인 아이디 입니다.");

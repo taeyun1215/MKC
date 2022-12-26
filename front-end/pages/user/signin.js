@@ -3,14 +3,24 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import logo from "../../asset/images/logo.png";
 import Image from "next/image";
+import axios from "axios";
 
-export default function signiin() {
+export default function Signiin() {
   const router = useRouter();
   const { register, handleSubmit } = useForm({ mode: "onChange" });
   const [autoLogCheck, setAutoLogCheck] = useState(null); //자동 로그인 상태
+  const form = new FormData();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    form.append("username", data.username);
+    form.append("password", data.password);
     console.log("data", data);
+    console.log(form);
+    const call = async () => {
+      const result = await axios.post("/api/login", form);
+      return result;
+    };
+    call().then((data) => console.log(data));
   };
 
   const checkHandler = (e) => {
@@ -23,11 +33,11 @@ export default function signiin() {
         <Image src={logo} alt="yehLogo" />
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="sign_contents">
-        <label htmlFor="id">아이디</label>
+        <label htmlFor="username">아이디</label>
         <input
-          name="id"
+          name="username"
           type="text"
-          {...register("id")}
+          {...register("username")}
           placeholder="아이디를 입력해주세요"
           autoComplete="off"
         />
