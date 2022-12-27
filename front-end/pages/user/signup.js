@@ -115,7 +115,7 @@ export default function Signup() {
         <input
           name="email"
           type="email"
-          placeholder="이메일을 입력해주세요 (user@goldenplane.co.kr)"
+          placeholder="이메일을 입력해주세요 (user@goldenplanet.co.kr)"
           {...register("email")}
           autoComplete="off"
         />

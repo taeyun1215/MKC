@@ -14,8 +14,6 @@ export default function Signiin() {
   const onSubmit = async (data) => {
     form.append("username", data.username);
     form.append("password", data.password);
-    console.log("data", data);
-    console.log(form);
     const call = async () => {
       const result = await axios.post("/api/login", form);
       return result;
