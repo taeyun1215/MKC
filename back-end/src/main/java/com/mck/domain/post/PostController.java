@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.mck.global.utils.CommonUtil.getUsernameFromToken;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -115,48 +116,26 @@ public class PostController {
     ) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
 
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            try {
-                String token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(token);
-                String username = decodedJWT.getSubject();
+        String username = getUsernameFromToken(request);
 
-                if (bindingResult.hasErrors()) {
-                    ReturnObject object = ReturnObject.builder()
-                            .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
-                            .type(bindingResult.getFieldError().getCode())
-                            .build();
+        if (bindingResult.hasErrors()) {
+            ReturnObject object = ReturnObject.builder()
+                    .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
+                    .type(bindingResult.getFieldError().getCode())
+                    .build();
 
-                    return ResponseEntity.badRequest().body(object);
-                } else {
-                    Post post = postService.savePost(postDto, username);
+            return ResponseEntity.badRequest().body(object);
+        } else {
+            Post post = postService.savePost(postDto, username);
 
-                    ReturnObject object = ReturnObject.builder()
-                            .msg("ok")
-                            .data(post)
-                            .build();
+            ReturnObject object = ReturnObject.builder()
+                    .msg("ok")
+                    .data(post)
+                    .build();
 
-                    return ResponseEntity.created(uri).body(object);
-                }
-
-            } catch (Exception e) {
-                response.setHeader("error", e.getMessage());
-                response.setStatus(FORBIDDEN.value());
-                Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
-            }
+            return ResponseEntity.created(uri).body(object);
         }
 
-        ReturnObject object = ReturnObject.builder()
-                .msg("요청 처리에 필요한 토큰값이 없습니다.")
-                .build();
-
-        return ResponseEntity.badRequest().body(object);
     }
 
     // 게시글 수정
