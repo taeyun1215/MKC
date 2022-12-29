@@ -63,7 +63,7 @@ export default function Signup() {
           } else {
             alert("회원가입에 실패했습니다. 잠시 후 다시 시도해 주십시오.");
           }
-        });
+        }).catch((err) => console.log(err));
     } catch (e) {
       console.log(e);
       alert("회원가입에 실패했습니다. 잠시 후 다시 시도해 주십시오.");

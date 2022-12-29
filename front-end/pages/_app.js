@@ -23,7 +23,8 @@ function MyApp({ Component, pageProps }) {
         </Head>
         {router.pathname == "/user/signin" ||
         router.pathname === "/user/signup" ||
-        router.pathname === "/user/signupComplete" ? (
+        router.pathname === "/user/signupComplete" || 
+        router.pathname === "/user/authComplete" ? (
           // <Provider store={store}>
           <Component {...pageProps} />
         ) : (

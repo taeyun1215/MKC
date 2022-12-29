@@ -25,6 +25,7 @@ export default function Post() {
         <button className="cancle">취소</button>
         <button>등록</button>
       </div>
+    
     </div>
   );
 }
