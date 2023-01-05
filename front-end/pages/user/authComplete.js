@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import cookie from "react-cookies";
 import axios from "axios";
 import { BsCheck2Circle } from "react-icons/bs";
 
 export default function SignupComplete() {
   const router = useRouter();
+
+  useEffect(() => {
+    const params = router.query
+    console.log(params)
+    // axios.get('http://130.162.159.231:80080/api/check-email-code')    
+    }, [router.query])
   return (
     <>
     <div className="sign" style={{ width: "auto" }}>

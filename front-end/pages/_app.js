@@ -1,23 +1,13 @@
 import "../styles/main.scss";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import AppLayout from "../component/AppLayout";
-import { QueryClient, QueryClientProvider, Hydrate } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
-
-const client = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
+ 
   return (
     <>
-      <QueryClientProvider client={client}>
         <Head>
           <title>YEH</title>
         </Head>
@@ -33,9 +23,8 @@ function MyApp({ Component, pageProps }) {
             <Component {...pageProps} />
           </AppLayout>
         )}
-      </QueryClientProvider>
     </>
   );
 }
-
-export default MyApp;
+export default MyApp
+// export default wrapper.withRedux(MyApp);

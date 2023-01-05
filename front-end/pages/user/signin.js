@@ -4,21 +4,37 @@ import { useRouter } from "next/router";
 import logo from "../../asset/images/logo.png";
 import Image from "next/image";
 import axios from "axios";
+import cookie from "react-cookies";
 
 export default function Signiin() {
   const router = useRouter();
   const { register, handleSubmit } = useForm({ mode: "onChange" });
   const [autoLogCheck, setAutoLogCheck] = useState(null); //자동 로그인 상태
-  const form = new FormData();
-
+  
   const onSubmit = async (data) => {
+    const form = new FormData();
+
     form.append("username", data.username);
     form.append("password", data.password);
-    const call = async () => {
-      const result = await axios.post("/api/login", form);
-      return result;
-    };
-    call().then((data) => console.log(data));
+
+    try {
+      await axios
+      .post("http://130.162.159.231:8080/api/login", form)
+      .then((res) => {
+        console.log(res)
+        if(res.status === 200) {
+          // useQuery('nickname', res.data.nickname)
+          axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.access_token}`;
+          router.push("/main")
+        } else {
+          console.log(res)
+          alert('아이디나 비밀번호가 일치하지 않습니다. 다시 시도해주세요.')
+        }
+      })
+    } catch(e) {
+      console.log(e)
+      alert('잠시 후 다시 시도해주세요.')
+    }
   };
 
   const checkHandler = (e) => {
