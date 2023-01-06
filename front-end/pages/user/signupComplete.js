@@ -23,7 +23,7 @@ export default function SignupComplete() {
         }).then((res) => {
           if(res.data.msg === 'ok') {
              setIsModal(true);
-             cookie.remove('userToken', {path : '/'},1000)
+             cookie.remove('userToken', {path : '/'}, 1000)
           } else {
             alert('잠시 후 다시 시도해 주세요.');
           }

@@ -2,6 +2,7 @@ import "../styles/main.scss";
 import Head from "next/head";
 import AppLayout from "../component/AppLayout";
 import { useRouter } from "next/router";
+import { stayLogged } from "./user/authToken";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -15,10 +16,8 @@ function MyApp({ Component, pageProps }) {
         router.pathname === "/user/signup" ||
         router.pathname === "/user/signupComplete" || 
         router.pathname === "/user/authComplete" ? (
-          // <Provider store={store}>
           <Component {...pageProps} />
         ) : (
-          // </Provider>
           <AppLayout>
             <Component {...pageProps} />
           </AppLayout>
@@ -26,5 +25,12 @@ function MyApp({ Component, pageProps }) {
     </>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    await stayLogged(context);
+  }
+);
+
+
 export default MyApp
-// export default wrapper.withRedux(MyApp);
