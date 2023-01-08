@@ -10,7 +10,7 @@ export default function Signiin() {
   const router = useRouter();
   const { register, handleSubmit } = useForm({ mode: "onChange" });
   const [autoLogCheck, setAutoLogCheck] = useState(null); //자동 로그인 상태
-  
+
   const onSubmit = async (data) => {
     const form = new FormData();
 
@@ -19,52 +19,43 @@ export default function Signiin() {
 
     try {
       await axios
-      .post("http://130.162.159.231:8080/api/login", form)
-      .then((res) => {
-        console.log(res)
-        if(res.status === 200) {
-          // useQuery('nickname', res.data.nickname)
-          setToken(res);
-          router.push("/main")
-        } else {
-          console.log(res)
-          alert('아이디나 비밀번호가 일치하지 않습니다. 다시 시도해주세요.')
-        }
-      })
-    } catch(e) {
-      console.log(e)
-      alert('잠시 후 다시 시도해주세요.')
+        .post("http://130.162.159.231:8080/api/login", form)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            // useQuery('nickname', res.data.nickname)
+            setToken(res);
+            router.push("/main");
+          } else {
+            console.log(res);
+            alert("아이디나 비밀번호가 일치하지 않습니다. 다시 시도해주세요.");
+          }
+        });
+    } catch (e) {
+      console.log(e);
+      alert("잠시 후 다시 시도해주세요.");
     }
-    
   };
   const setToken = (res) => {
     const accessToken = res.data.access_token;
-    const refreshToken = res.data.refresh_token
-    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    const refreshToken = res.data.refresh_token;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
-    const expires = new Date()
-    expires.setDate(Date.now() + 1000 * 60 * 60 * 24)
+    const expires = new Date();
+    expires.setDate(Date.now() + 1000 * 60 * 60 * 24);
 
-    cookie.save(
-      'accessToken'
-      , accessToken
-      , {
-          path: '/'
-          , expires
-          // , httpOnly: HTTP_ONLY // dev/prod 에 따라 true / false 로 받게 했다.
-      }
-  )
-  cookie.save(
-      'refreshToken'
-      , refreshToken
-      , {
-          path: '/'
-          , expires
-          // , httpOnly: HTTP_ONLY
-      }
-  )
-  }
-  
+    cookie.save("accessToken", accessToken, {
+      path: "/",
+      expires,
+      httpOnly: true,
+    });
+    cookie.save("refreshToken", refreshToken, {
+      path: "/",
+      expires,
+      httpOnly: true,
+    });
+  };
+
   const checkHandler = (e) => {
     setAutoLogCheck(e.target.checked);
   };

@@ -1,3 +1,3 @@
-export const stayLogged = async () => {
-    
-}
+export const stayLogged = async (context) => {
+  console.log(context);
+};
