@@ -65,7 +65,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 // 토큰 이름
                 .withSubject(user.getUsername())
                 // 토큰 만료일
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 // .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 1000))
                 // 토큰 발행자
                 .withIssuer(request.getRequestURI().toString())
@@ -79,7 +79,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 // 토큰 이름
                 .withSubject(user.getUsername())
                 // 토큰 만료일
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
                 // 토큰 발행자
                 .withIssuer(request.getRequestURI().toString())
                 // 토큰 서명
