@@ -1,7 +1,7 @@
-import logo from "../asset/images/logo.png";
+import logo from '../../asset/images/logo.png'
 import Image from "next/image";
 import { useRouter } from "next/router";
-import header_search from "../asset/images/header_search.png";
+import header_search from "../../asset/images/header_search.png";
 const AppLayout = ({ children }) => {
   const router = useRouter();
 

@@ -21,10 +21,14 @@ export default function Signiin() {
       await axios
         .post("http://130.162.159.231:8080/api/login", form)
         .then((res) => {
-          console.log(res);
           if (res.status === 200) {
             // useQuery('nickname', res.data.nickname)
-            setToken(res);
+            const accessToken = res.data.access_token;
+            const refreshToken = res.data.refresh_token;
+            axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+            cookie.save("accessToken", accessToken);
+            cookie.save("refreshToken", refreshToken);
+
             router.push("/main");
           } else {
             console.log(res);
@@ -35,25 +39,6 @@ export default function Signiin() {
       console.log(e);
       alert("잠시 후 다시 시도해주세요.");
     }
-  };
-  const setToken = (res) => {
-    const accessToken = res.data.access_token;
-    const refreshToken = res.data.refresh_token;
-    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
-    const expires = new Date();
-    expires.setDate(Date.now() + 1000 * 60 * 60 * 24);
-
-    cookie.save("accessToken", accessToken, {
-      path: "/",
-      expires,
-      httpOnly: true,
-    });
-    cookie.save("refreshToken", refreshToken, {
-      path: "/",
-      expires,
-      httpOnly: true,
-    });
   };
 
   const checkHandler = (e) => {

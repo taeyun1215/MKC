@@ -1,11 +1,9 @@
 import "../styles/main.scss";
 import Head from "next/head";
-import AppLayout from "../component/AppLayout";
+import AppLayout from "../component/layout/AppLayout";
 import { useRouter } from "next/router";
-// import { stayLogged } from "./user/authToken";
-// import wrapper from "../store/configureStore";
-// import cookies from "next-cookies";
-// import App from "next/app";
+import { useEffect } from "react";
+import loginApi from '../component/utils/loginApi';
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -28,29 +26,5 @@ function MyApp({ Component, pageProps }) {
     </>
   );
 }
-// export const getServerSideProps = wrapper.getServerSideProps(
-//   async (context) => {
-//     const parsedCookie = context.req
-//       ? cookie.parse(context.req.headers.cookie || "")
-//       : "";
-//     console.log(parsedCookie);
-//     if (context.req && parsedCookie) {
-//       if (parsedCookie["accessToken"]) {
-//         context.store.dispatch({
-//           type: LOAD_MY_INFO_REQUEST,
-//           data: parsedCookie["accessToken"],
-//         });
-//       }
-//     }
-//     context.store.dispatch(END);
-//     await context.store.sagaTask.toPromise();
-//   }
-// );
-
-// export const getServerSideProps = wrapper.getServerSideProps(
-//   async (context) => {
-//     await stayLogged(context);
-//   }
-// );
 
 export default MyApp;
