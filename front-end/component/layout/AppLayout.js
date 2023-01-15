@@ -1,10 +1,16 @@
-import logo from '../../asset/images/logo.png'
+import logo from "../../asset/images/logo.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import header_search from "../../asset/images/header_search.png";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+
 const AppLayout = ({ children }) => {
   const router = useRouter();
+  const IsLog = useSelector((state) => state.userInfo);
+  // const Nickname = useSelector((state) => state.userInfo.Nickname);
 
+  console.log(IsLog);
   return (
     <>
       <div className="header">
@@ -21,12 +27,17 @@ const AppLayout = ({ children }) => {
           </div>
         </div>
         <div className="header_signBtn">
-          <button
-            onClick={() => router.push("/user/signin")}
-            className="header_signin"
-          >
-            로그인
-          </button>
+          {IsLog ? (
+            <span>{Nickname + " 님"}</span>
+          ) : (
+            <button
+              onClick={() => router.push("/user/signin")}
+              className="header_signin"
+            >
+              로그인
+            </button>
+          )}
+
           <button
             onClick={() => router.push("/board/post")}
             className="header_write"

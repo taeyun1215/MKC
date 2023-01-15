@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import logo from "../../asset/images/logo.png";
 import Image from "next/image";
 import axios from "axios";
 import cookie from "react-cookies";
+import { useDispatch } from "react-redux";
+import { nickname, emailAuth, isLog } from "../../reducer/user";
 
 export default function Signiin() {
   const router = useRouter();
   const { register, handleSubmit } = useForm({ mode: "onChange" });
+  const dispatch = useDispatch();
   const [autoLogCheck, setAutoLogCheck] = useState(null); //자동 로그인 상태
 
   const onSubmit = async (data) => {
@@ -18,23 +21,32 @@ export default function Signiin() {
     form.append("password", data.password);
 
     try {
-      await axios
-        .post("http://130.162.159.231:8080/api/login", form)
-        .then((res) => {
-          if (res.status === 200) {
-            // useQuery('nickname', res.data.nickname)
-            const accessToken = res.data.access_token;
-            const refreshToken = res.data.refresh_token;
-            axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-            cookie.save("accessToken", accessToken);
-            cookie.save("refreshToken", refreshToken);
-
-            router.push("/main");
-          } else {
-            console.log(res);
-            alert("아이디나 비밀번호가 일치하지 않습니다. 다시 시도해주세요.");
-          }
-        });
+      await axios.post("/api/login", form).then((res) => {
+        if (res.status === 200) {
+          dispatch(isLog(true));
+          dispatch(nickname(res.data.nickname));
+          dispatch(emailAuth(res.data.emailVerified));
+          const accessToken = res.data.access_token;
+          const refreshToken = res.data.refresh_token;
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${accessToken}`;
+          cookie.save("accessToken", accessToken, {
+            httpOnly: true,
+            withCredentials: true,
+            secure: true,
+          });
+          cookie.save("refreshToken", refreshToken, {
+            httpOnly: true,
+            withCredentials: true,
+            secure: true,
+          });
+          router.push("/main");
+        } else {
+          console.log(res);
+          alert("아이디나 비밀번호가 일치하지 않습니다. 다시 시도해주세요.");
+        }
+      });
     } catch (e) {
       console.log(e);
       alert("잠시 후 다시 시도해주세요.");
