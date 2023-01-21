@@ -19,32 +19,56 @@ public class ValidationExceptionHandler extends ResponseEntityExceptionHandler {
     /* response 예제
     {
         "success": false,
-            "error": {
-        "messages": [
-            "닉네임은 영문, 숫자, 한글만 가능합니다.",
-            "goldenplanet.co.kr 이메일만 사용 가능합니다"
-        ],
-        "statusCode": "BAD_REQUEST",
-        "timestamp": "2023-01-20T12:22:01.226581"
-        }
+        "error": [
+            {
+                "code": "invalid_pattern",
+                "field": "email",
+                "message": "goldenplanet.co.kr 이메일만 사용 가능합니다"
+            },
+            {
+                "code": "invalid_size",
+                "field": "nickname",
+                "message": "닉네임은 3자 이상 10자 이하로 입력해주세요."
+            },
+            {
+                "code": "invalid_pattern",
+                "field": "password",
+                "message": "비밀번호는 최소 8자 이상 16자 이하, 하나 이상의 문자 및 숫자, 하나 이상의 특수문자가 포함되어야 합니다"
+            }
+        ]
     }
     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, Object> body = new HashMap<>();
-        Map<String, Object> error = new HashMap<>();
 
-        error.put("code", HttpStatus.BAD_REQUEST);
-
-        List<String> errors = ex.getBindingResult().getFieldErrors()
+        List<Map<String, String>> errors = ex.getBindingResult().getFieldErrors()
                 .stream()
-                .map(e -> e.getDefaultMessage())
+                .map(e -> {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("code", getCodeName(e.getCode()));
+                    map.put("message", e.getDefaultMessage());
+                    map.put("field", e.getField());
+                    return map;
+                })
                 .collect(Collectors.toList());
-        error.put("messages", errors);
 
         body.put("success", false);
-        body.put("error", error);
+        body.put("error", errors);
 
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
+
+    private String getCodeName(String code){
+        String code_name = "invalid_parameter";
+        switch (code){
+            case "Pattern":
+                code_name = "invalid_pattern";
+                break;
+            case "Size":
+                code_name = "invalid_size";
+                break;
+        }
+        return code_name;
     }
 }

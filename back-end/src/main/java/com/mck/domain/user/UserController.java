@@ -111,7 +111,7 @@ public class UserController {
                     // 토큰 이름
                     .withSubject(user.getUsername())
                     // 토큰 만료일
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 120 * 60 * 1000))
                     // 토큰 발행자
                     .withIssuer(request.getRequestURI().toString())
                     // 토큰 서명
