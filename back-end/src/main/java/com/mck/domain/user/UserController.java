@@ -61,29 +61,44 @@ public class UserController {
 
     // 유저 등록
     @PostMapping("/user")
-    public ResponseEntity<ReturnObject> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
+    public ResponseEntity<Object> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+
+        Map<String, Object> body = new HashMap<>();
+        Map<String, Object> error = new HashMap<>();
 
         if (!StringUtils.equals(userSignUpDto.getPassword(), userSignUpDto.getConfirmPassword())) {
             log.error("검증실패");
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("비밀번호와 비밀번호 확인이 일치하지 않습니다.")
-                    .type("different.confirmPassword")
-                    .build();
+            error.put("code", "different.confirmPassword");
+            error.put("message", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
 
-            return ResponseEntity.badRequest().body(object);
+            body.put("success", false);
+            body.put("error", error);
+
+//            ReturnObject object = ReturnObject.builder()
+//                    .msg("비밀번호와 비밀번호 확인이 일치하지 않습니다.")
+//                    .type("different.confirmPassword")
+//                    .build();
+
+            return ResponseEntity.ok().body(body);
         }
 
         if (errors.hasErrors()) {
             System.out.println("검증실패");
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg(errors.getFieldError().getDefaultMessage())
-                    .type(errors.getFieldError().getCode())
-                    .build();
+            error.put("code", errors.getFieldError().getCode());
+            error.put("message", errors.getFieldError().getDefaultMessage());
 
-            return ResponseEntity.badRequest().body(object);
+            body.put("success", false);
+            body.put("error", error);
+
+//            ReturnObject object = ReturnObject.builder()
+//                    .msg(errors.getFieldError().getDefaultMessage())
+//                    .type(errors.getFieldError().getCode())
+//                    .build();
+
+            return ResponseEntity.ok().body(body);
         } else {
             User user = userService.newUser(userSignUpDto);
             User saveUser = userService.saveUser(user);
@@ -121,11 +136,14 @@ public class UserController {
             token.put("access_token", access_token);
             token.put("refresh_token", refresh_token);
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
-                    .data(token).build();
+            body.put("success", true);
+            body.put("user", token);
 
-            return ResponseEntity.created(uri).body(object);
+//            ReturnObject object = ReturnObject.builder()
+//                    .msg("ok")
+//                    .data(token).build();
+
+            return ResponseEntity.created(uri).body(body);
         }
     }
 
