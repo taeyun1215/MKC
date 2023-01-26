@@ -4,9 +4,9 @@ import { useRouter } from "next/router";
 import logo from "../../asset/images/logo.png";
 import Image from "next/image";
 import axios from "axios";
-import cookie from "react-cookies";
 import { useDispatch } from "react-redux";
 import { nickname, emailAuth, isLog } from "../../reducer/user";
+import cookie from "react-cookies";
 
 export default function Signiin() {
   const router = useRouter();
@@ -22,25 +22,44 @@ export default function Signiin() {
 
     try {
       await axios.post("/api/login", form).then((res) => {
-        if (res.status === 200) {
+        if (res.data.success === true) {
           dispatch(isLog(true));
-          dispatch(nickname(res.data.nickname));
-          dispatch(emailAuth(res.data.emailVerified));
-          const accessToken = res.data.access_token;
-          const refreshToken = res.data.refresh_token;
+          // dispatch(nickname(res.data.nickname));
+          // dispatch(emailAuth(res.data.emailVerified));
+          const accessToken = res.data.data.access_token;
+          const refreshToken = res.data.data.refresh_token;
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
           cookie.save("accessToken", accessToken, {
             httpOnly: true,
-            withCredentials: true,
+            // path:"/",
+            // withCredentials: true,
             secure: true,
           });
           cookie.save("refreshToken", refreshToken, {
-            httpOnly: true,
-            withCredentials: true,
+            // httpOnly: true,
+            // withCredentials: true,
             secure: true,
           });
+        //   res.setHeader('Set-Cookie', [
+        //     cookie.serialize(
+        //         'accessToken', accessToken, {
+        //             httpOnly: true,
+        //             secure: process.env.NODE_ENV !== 'development',
+        //             maxAge: 60 * 30,
+        //             sameSite: 'strict',
+        //         }
+        //     ),
+        //     cookie.serialize(
+        //         'refreshToken', refreshToken, {
+        //             httpOnly: true,
+        //             secure: process.env.NODE_ENV !== 'development',
+        //             maxAge: 60 * 60 * 24,
+        //             sameSite: 'strict',
+        //         }
+        //     )
+        // ]);
           router.push("/main");
         } else {
           console.log(res);

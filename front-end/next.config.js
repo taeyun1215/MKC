@@ -5,7 +5,15 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
-
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/main",
+        permanent: false
+      }
+    ]
+  }
   // async rewrites() {
   //   return [
   //     {

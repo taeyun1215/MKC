@@ -2,20 +2,40 @@ import logo from "../../asset/images/logo.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import header_search from "../../asset/images/header_search.png";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useSelector , useDispatch} from "react-redux";
+import { Dropdown, Button } from 'antd';
+import { isLog } from "../../reducer/user";
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
-  const IsLog = useSelector((state) => state.userInfo);
-  // const Nickname = useSelector((state) => state.userInfo.Nickname);
-
-  console.log(IsLog);
+  const dispatch = useDispatch();
+  const Loggin = useSelector((state) => state.IsLog);
+  const Nickname = useSelector((state) => state.Nickname);
+  
+ const items = [
+   {
+     key: '1',
+     label: (
+      <a>
+        마이페이지
+      </a>
+    )
+   },
+   {
+     key: '2',
+     label: (
+       <a onClick={() => dispatch(isLog(false))}>
+         
+         로그아웃</a>
+     ),
+   },
+  
+ ];
   return (
     <>
       <div className="header">
         <div className="header_wrap">
-          <Image src={logo} alt="yehLogo" className="heaeder_logo" />
+          <Image src={logo} alt="yehLogo" className="heaeder_logo" onClick={() => router.push('/main')}/>
           <div className="header_search">
             <button>
               <Image src={header_search} alt="search" />
@@ -27,17 +47,27 @@ const AppLayout = ({ children }) => {
           </div>
         </div>
         <div className="header_signBtn">
-          {IsLog ? (
-            <span>{Nickname + " 님"}</span>
+          {Loggin ? (
+           <Dropdown menu={{ items }} placement="bottom">
+           <Button>{Nickname}</Button>
+         </Dropdown>
           ) : (
+            <div>
             <button
               onClick={() => router.push("/user/signin")}
               className="header_signin"
             >
               로그인
             </button>
-          )}
-
+            <span style={{color:"#2b3089"}}> | </span>
+            <button
+              onClick={() => router.push("/user/signup")}
+              className="header_signin"
+            >
+              회원가입
+            </button>
+            </div>
+           )}
           <button
             onClick={() => router.push("/board/post")}
             className="header_write"

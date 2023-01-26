@@ -14,11 +14,7 @@ export default function Signup() {
   const formSchema = yup.object({
     username: yup
       .string()
-      .required("아이디는 필수 입력 정보입니다")
-      .matches(
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{1,30}$/,
-        "아이디는 영문, 숫자 조합으로 가능합니다"
-      ),
+      .required("아이디는 필수 입력 정보입니다"),
     email: yup
       .string()
       .required("이메일은 필수 입력 정보입니다 입력해주세요")
@@ -36,9 +32,9 @@ export default function Signup() {
         /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[,./;'<>?:"~!@#$%^&*()])[a-zA-Z0-9,./;'<>?:"~!@#$%^&*()]{8,20}$/,
         "영문, 숫자, 특수문자 포함 8자리를 입력해주세요."
       ),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
+    // confirmPassword: yup
+    //   .string()
+    //   .oneOf([yup.ref("password")], "비밀번호가 일치하지 않습니다."),
     nickname: yup.string().required("닉네임은 필수 입력 정보입니다"),
   });
 
@@ -54,12 +50,13 @@ export default function Signup() {
       await axios
         .post("http://130.162.159.231:8080/api/user", data)
         .then((res) => {
-          if (res.data.msg === "ok") {
+          console.log(res)
+          if (res.data.success === true) {
             const token = res.data.data.access_token;
             cookie.save("userToken", token);
             router.push("/user/signupComplete");
-          } else if (res.data.msg === "이미 사용중인 아이디 입니다.") {
-            alert("이미 사용중인 아이디 입니다.");
+          } else if (res.data.success === false) {
+            alert(res.data.error[0].message);
           } else {
             alert("회원가입에 실패했습니다. 잠시 후 다시 시도해 주십시오.");
           }
