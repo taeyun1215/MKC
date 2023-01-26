@@ -10,6 +10,7 @@ import com.mck.domain.user.dto.UserSignUpDto;
 import com.mck.domain.useremail.UserEmail;
 
 import com.mck.global.error.ErrorCode;
+import com.mck.global.utils.ErrorObject;
 import com.mck.infra.mail.EmailMessage;
 import com.mck.infra.mail.EmailService;
 import com.mck.global.utils.ReturnObject;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,41 +66,28 @@ public class UserController {
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserSignUpDto userSignUpDto, HttpServletRequest request, Errors errors) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
 
-        Map<String, Object> body = new HashMap<>();
-        Map<String, Object> error = new HashMap<>();
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
 
         if (!StringUtils.equals(userSignUpDto.getPassword(), userSignUpDto.getConfirmPassword())) {
             log.error("검증실패");
 
-            error.put("code", "different.confirmPassword");
-            error.put("message", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            errorObject = ErrorObject.builder().code("different_confirmPassword").message("비밀번호와 비밀번호 확인이 일치하지 않습니다.").build();
+            errorObjectArrayList.add(errorObject);
+            returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
 
-            body.put("success", false);
-            body.put("error", error);
-
-//            ReturnObject object = ReturnObject.builder()
-//                    .msg("비밀번호와 비밀번호 확인이 일치하지 않습니다.")
-//                    .type("different.confirmPassword")
-//                    .build();
-
-            return ResponseEntity.ok().body(body);
+            return ResponseEntity.ok().body(returnObject);
         }
 
         if (errors.hasErrors()) {
             System.out.println("검증실패");
 
-            error.put("code", errors.getFieldError().getCode());
-            error.put("message", errors.getFieldError().getDefaultMessage());
+            errorObject = ErrorObject.builder().code(errors.getFieldError().getCode()).message(errors.getFieldError().getDefaultMessage()).build();
+            errorObjectArrayList.add(errorObject);
+            returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
 
-            body.put("success", false);
-            body.put("error", error);
-
-//            ReturnObject object = ReturnObject.builder()
-//                    .msg(errors.getFieldError().getDefaultMessage())
-//                    .type(errors.getFieldError().getCode())
-//                    .build();
-
-            return ResponseEntity.ok().body(body);
+            return ResponseEntity.ok().body(returnObject);
         } else {
             User user = userService.newUser(userSignUpDto);
             User saveUser = userService.saveUser(user);
@@ -136,14 +125,10 @@ public class UserController {
             token.put("access_token", access_token);
             token.put("refresh_token", refresh_token);
 
-            body.put("success", true);
-            body.put("user", token);
+            returnObject = ReturnObject.builder().success(true).data(token).build();
 
-//            ReturnObject object = ReturnObject.builder()
-//                    .msg("ok")
-//                    .data(token).build();
 
-            return ResponseEntity.created(uri).body(body);
+            return ResponseEntity.ok().body(returnObject);
         }
     }
 
@@ -158,6 +143,10 @@ public class UserController {
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
+
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 // 토크만 추출 하도록 type부분 제거
@@ -185,16 +174,25 @@ public class UserController {
                 Map<String, String> token = new HashMap<>();
                 token.put("access_token", access_token);
                 token.put("refresh_token", refresh_token);
+
+                returnObject = ReturnObject.builder().success(true).data(token).build();
+
                 response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), token);
+
+                new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             } catch (Exception e) {
                 response.setHeader("error", e.getMessage());
                 response.setStatus(FORBIDDEN.value());
                 // response.sendError(FORBIDDEN.value());
                 Map<String, String> error = new HashMap<>();
                 error.put("error_message", e.getMessage());
+
+                errorObject = ErrorObject.builder().code("invalid_token").message(e.getMessage()).build();
+                errorObjectArrayList.add(errorObject);
+                returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
+
                 response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
             }
         } else {
             throw new RuntimeException("Refresh 토큰이 없습니다.");
@@ -205,7 +203,9 @@ public class UserController {
     @DeleteMapping("/user")
     public ResponseEntity<ReturnObject> deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
-        ReturnObject object;
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String token = authorizationHeader.substring("Bearer ".length());
@@ -215,50 +215,47 @@ public class UserController {
                 String username = decodedJWT.getSubject();
                 userService.deleteUser(username);
 
-                object = ReturnObject.builder()
-                        .msg("ok")
-                        .build();
+                returnObject = ReturnObject.builder().success(true).build();
+
+                return ResponseEntity.ok().body(returnObject);
 
             } catch (Exception e) {
-                object = ReturnObject.builder()
-                        .msg(e.getMessage())
-                        .type(APPLICATION_JSON_VALUE)
-                        .build();
+                errorObject = ErrorObject.builder().message(e.getMessage()).code(APPLICATION_JSON_VALUE).build();
+                errorObjectArrayList.add(errorObject);
+                returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
 
-                return ResponseEntity.status(FORBIDDEN.value()).body(object);
+                return ResponseEntity.ok().body(returnObject);
             }
         } else {
-            object = ReturnObject.builder()
-                    .msg("토큰이 없거나 올바르지 않은 토큰입니다.")
-                    .type("invalid.token")
-                    .build();
-            return ResponseEntity.badRequest().body(object);
+            errorObject = ErrorObject.builder().message("토큰이 없거나 올바르지 않은 토큰입니다.").code("invalid_token").build();
+            errorObjectArrayList.add(errorObject);
+            returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
+            return ResponseEntity.ok().body(returnObject);
         }
-
-        return ResponseEntity.ok().body(object);
     }
 
     // 인증 메일 확인
     @GetMapping("/check-email-code")
     public ResponseEntity<ReturnObject> checkEmailCode(String code, String email, String username, Model model) {
         User user = userService.getUser(username);
-        ReturnObject object;
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
         if(user == null){
-            object = ReturnObject.builder()
-                    .type("wrong.username")
-                    .msg("이메일 확인 링크가 정확하지 않습니다.")
-                    .build();
-            return ResponseEntity.badRequest().body(object);
+            errorObject = ErrorObject.builder().message("이메일 확인 링크가 정확하지 않습니다.").code("wrong_username").build();
+            errorObjectArrayList.add(errorObject);
+            returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
+
+            return ResponseEntity.ok().body(returnObject);
         }
 
         UserEmail userEmail = UserEmail.builder().email(email).code(code).build();
 
         if (!emailService.checkCertifyEmail(userEmail)) {
-            object = ReturnObject.builder()
-                    .type("wrong.code")
-                    .msg("인증 코드가 틀립니다.")
-                    .build();
-            return ResponseEntity.badRequest().body(object);
+            errorObject = ErrorObject.builder().message("인증 코드가 틀립니다.").code("wrong_code").build();
+            errorObjectArrayList.add(errorObject);
+            returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
+            return ResponseEntity.badRequest().body(returnObject);
         }
 
         user.completeSignUp();
@@ -267,12 +264,9 @@ public class UserController {
 
         model.addAttribute("username", username);
 
-        object = ReturnObject.builder()
-                .msg("ok")
-                .data(model)
-                .build();
+        returnObject = ReturnObject.builder().success(true).data(model).build();
 
-        return ResponseEntity.ok().body(object);
+        return ResponseEntity.ok().body(returnObject);
 
     }
 
@@ -281,6 +275,9 @@ public class UserController {
     @GetMapping("/username")
     public ResponseEntity<ReturnObject> findUsername(@RequestParam String email){
         User result = userService.checkUserEmail(email);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+        ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
         if (result != null){
             Context context = new Context();
             context.setVariable("link", "/api/username");
@@ -295,20 +292,18 @@ public class UserController {
 
             emailService.sendEmail(emailMessage);
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("ok").build();
+            ReturnObject object = ReturnObject.builder().success(true).build();
 
             return ResponseEntity.ok().body(object);
 
         } else{
             log.error("해당 이메일로 가입된 계정을 찾을 수 없습니다.");
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("해당 이메일로 가입된 계정을 찾을 수 없습니다.")
-                    .type("invalid.email")
-                    .build();
+            errorObject = ErrorObject.builder().message("해당 이메일로 가입된 계정을 찾을 수 없습니다.").code("invalid_email").build();
+            errorObjectArrayList.add(errorObject);
+            returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
 
-            return ResponseEntity.badRequest().body(object);
+            return ResponseEntity.ok().body(returnObject);
         }
     }
 

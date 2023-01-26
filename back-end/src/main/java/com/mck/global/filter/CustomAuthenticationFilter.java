@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mck.domain.user.UserRepo;
+import com.mck.global.utils.ErrorObject;
+import com.mck.global.utils.ReturnObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -95,9 +97,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         token.put("nickname", userDetail.getNickname());
         response.setContentType(APPLICATION_JSON_VALUE);
 
-        body.put("success", true);
-        body.put("login", token);
+        ReturnObject returnObject = ReturnObject.builder().success(true).data(token).build();
 
-        new ObjectMapper().writeValue(response.getOutputStream(), body);
+        new ObjectMapper().writeValue(response.getOutputStream(), returnObject);
     }
 }

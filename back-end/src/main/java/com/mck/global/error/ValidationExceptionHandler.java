@@ -1,5 +1,7 @@
 package com.mck.global.error;
 
+import com.mck.global.utils.ErrorObject;
+import com.mck.global.utils.ReturnObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,23 +42,18 @@ public class ValidationExceptionHandler extends ResponseEntityExceptionHandler {
     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        Map<String, Object> body = new HashMap<>();
-
-        List<Map<String, String>> errors = ex.getBindingResult().getFieldErrors()
+        List<ErrorObject> errors = ex.getBindingResult().getFieldErrors()
                 .stream()
                 .map(e -> {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("code", getCodeName(e.getCode()));
-                    map.put("message", e.getDefaultMessage());
-                    map.put("field", e.getField());
-                    return map;
+                    return ErrorObject.builder().code(getCodeName(e.getCode())).message(e.getDefaultMessage()).field(e.getField()).build();
                 })
                 .collect(Collectors.toList());
 
-        body.put("success", false);
-        body.put("error", errors);
+        ArrayList error_list = new ArrayList(errors);
 
-        return new ResponseEntity<>(body, HttpStatus.OK);
+        ReturnObject object = ReturnObject.builder().success(false).error(error_list).build();
+
+        return new ResponseEntity<>(object, HttpStatus.OK);
     }
 
     private String getCodeName(String code){
@@ -71,4 +68,5 @@ public class ValidationExceptionHandler extends ResponseEntityExceptionHandler {
         }
         return code_name;
     }
+
 }
