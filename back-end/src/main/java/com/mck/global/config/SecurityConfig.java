@@ -38,15 +38,6 @@ import static org.springframework.http.HttpMethod.GET;
 @Configuration
 public class SecurityConfig {
 
-    private final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
-            new AntPathRequestMatcher("/v1/**"),new AntPathRequestMatcher("/admin/**")
-    );
-
-
-    private final UserDetailServiceImpl userDetailService;
-
-    AuthenticationProvider provider;
-
     private final UserRepo userRepo;
 
     @Bean

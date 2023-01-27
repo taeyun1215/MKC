@@ -13,9 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
+// 로그인에 실패했을 때 에러 처리를 담당하는 handler
 @Component
 public class RestAuthenticationFailureHandler implements AuthenticationFailureHandler
 {
@@ -24,9 +23,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
                                         AuthenticationException ex) throws IOException, ServletException
     {
         ErrorObject errorObject = ErrorObject.builder().code("notfound_user").message("해당 유저 정보를 찾을 수 없습니다").build();
-        ArrayList<ErrorObject> errorObjectArrayList = new ArrayList<>();
-        errorObjectArrayList.add(errorObject);
-        ReturnObject returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
+        ReturnObject returnObject = ReturnObject.builder().success(false).error(errorObject).build();
 
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
         OutputStream out = httpServletResponse.getOutputStream();

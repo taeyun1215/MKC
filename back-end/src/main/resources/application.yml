@@ -9,8 +9,8 @@ spring:
     active: dev
   datasource:
     url: jdbc:mariadb://localhost:3306/mkc
-    username: root
-    password: k3744274!
+    username: mkc
+    password: sve4SBB54H7Q
 
 #spring:
 #  profiles:
@@ -44,8 +44,8 @@ spring:
   redis:
     port: 6379
     host: 127.0.0.1
-#    username: root
-#    password: 3iZXb4AK5dH5
+    username: root
+    password: 3iZXb4AK5dH5
 
 file:
   upload:

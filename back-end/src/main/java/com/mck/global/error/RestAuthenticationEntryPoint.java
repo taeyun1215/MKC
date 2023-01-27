@@ -13,9 +13,11 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+// 401(UnAuthorized) 인증 에러가 발생했을 때 처리해주는 로직
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    // 인증 에러가 발생했을 때 실행되는 메소드
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
 

@@ -16,5 +16,5 @@ public class ReturnObject {
     @Builder.Default
     private boolean success = false; // 성공 여부
     private Object data;
-    private ArrayList<ErrorObject> error; // 에러 객체
+    private Object error; // 에러 객체
 }

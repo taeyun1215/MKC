@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+// access 권한이 없는 페이지에 접속했을 때 발생하는 AccessDeniedException을 처리하는 handler
 @Component
 public class RestAccessDeniedHandler implements AccessDeniedHandler {
 
