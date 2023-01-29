@@ -6,12 +6,15 @@ import Image from "next/image";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { nickname, emailAuth, isLog } from "../../reducer/user";
+import { useCookies } from "react-cookie";
 import cookie from "react-cookies";
+import { HTTP_ONLY } from "../../config/config";
 
 export default function Signiin() {
   const router = useRouter();
-  const { register, handleSubmit } = useForm({ mode: "onChange" });
   const dispatch = useDispatch();
+  const { register, handleSubmit } = useForm({ mode: "onChange" });
+  const [cookies, setCookie, removeCookie] = useCookies();
   const [autoLogCheck, setAutoLogCheck] = useState(null); //자동 로그인 상태
 
   const onSubmit = async (data) => {
@@ -31,35 +34,12 @@ export default function Signiin() {
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
+          // setCookie("accessToken", accessToken);
+          // setCookie("refreshToken", refreshToken);
           cookie.save("accessToken", accessToken, {
-            httpOnly: true,
-            // path:"/",
-            // withCredentials: true,
-            secure: true,
+            httpOnly: HTTP_ONLY,
+            path: "/",
           });
-          cookie.save("refreshToken", refreshToken, {
-            // httpOnly: true,
-            // withCredentials: true,
-            secure: true,
-          });
-        //   res.setHeader('Set-Cookie', [
-        //     cookie.serialize(
-        //         'accessToken', accessToken, {
-        //             httpOnly: true,
-        //             secure: process.env.NODE_ENV !== 'development',
-        //             maxAge: 60 * 30,
-        //             sameSite: 'strict',
-        //         }
-        //     ),
-        //     cookie.serialize(
-        //         'refreshToken', refreshToken, {
-        //             httpOnly: true,
-        //             secure: process.env.NODE_ENV !== 'development',
-        //             maxAge: 60 * 60 * 24,
-        //             sameSite: 'strict',
-        //         }
-        //     )
-        // ]);
           router.push("/main");
         } else {
           console.log(res);

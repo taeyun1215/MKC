@@ -8,6 +8,8 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { useEffect } from "react";
+// import cookies from "next-cookies";
+import { Cookies } from "react-cookie";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -16,9 +18,6 @@ function MyApp({ Component, pageProps }) {
   // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
   axios.defaults.withCredentials = true;
 
-  useEffect(() => {
-    console.log(axios.defaults.headers.common.Authorization)
-  },[])
   // useEffect(() => {
   //   try {
   //     axios.get("/api/token/refresh").then((res) => console.log(res));
@@ -75,14 +74,28 @@ export default MyApp;
 //   };
 // }
 MyApp.getInitialProps = async (ctx) => {
-  console.log(axios.defaults.headers.common.Authorization)
+  const cookie = new Cookies();
+  const test = cookie.get("accessToken");
+  console.log(test);
+  // console.log(axios.defaults.headers.common.Authorization);
+  // console.log("******************************");
+  // console.log(ctx?.ctx?.req?.header);
+
+  // console.log("#################");
+
   // console.log( axios.defaults.headers.common[
   //   "Authorization"
   // ])
   // const { ctx, Component } = context;
   // let pageProps = {title : 123123};
   // console.log(ctx?.ctx?.req?.headers?.cookie)
-  axios.get("/api/token/refresh").then((res) => console.log(res));
 
-  return { };
+  axios({
+    method: "get",
+    url: "/api/token/refresh",
+    headers: {
+      Authorization: `Bearer ${test}`,
+    },
+  }).then((res) => console.log(res));
+  return {};
 };
