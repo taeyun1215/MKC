@@ -7,25 +7,15 @@ import store from "../store/index";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
-import { useEffect } from "react";
-// import cookies from "next-cookies";
+import cookies from "next-cookies";
 import { Cookies } from "react-cookie";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps}) {
   const router = useRouter();
   const persistor = persistStore(store);
   axios.defaults.baseURL = "http://130.162.159.231:8080";
-  // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
   axios.defaults.withCredentials = true;
-
-  // useEffect(() => {
-  //   try {
-  //     axios.get("/api/token/refresh").then((res) => console.log(res));
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }, []);
-
+  
   return (
     <>
       <Provider store={store}>
@@ -51,51 +41,55 @@ function MyApp({ Component, pageProps }) {
 
 export default MyApp;
 
-// export async function getServerSideProps(context) {
-//   console.log(context)
-//   // const cookieString = context.req ? context.req.headers.cookie : '';
+// export async function getServerSideProps(ctx) {
 
-// 	// set the cookies
-// 	// context.res.setHeader('set-Cookie', 'foo=bar; HttpOnly');
-//   const res = axios.get("/api/token/refresh" , {headers : `Bearer ${cookieString}`})
-//   const data = await res.json()
-//   return { props: { data } }
+//   const cookie = new Cookies();
+//   const accessToken = cookie.get("accessToken");
+ 
+//   const res = await axios({
+//       method: "get",
+//       url: "/api/token/refresh",
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     })
+//     const data = await res.json()
+//     const test = 'test'
+//     return { props : test };
 // }
 
-// export function getServerSideProps(context) {
-//   // print incoming headers
-//   console.log(context.req.headers);
 
-//   // add header
-//   context.res.setHeader("X-Foo", "Bar");
-
+// export const getServerSideProps = async (ctx) => {
+//   const cookie = new Cookies();
+//   const accessToken = cookie.get("accessToken");
+//   // axios({
+//   //   method: "get",
+//   //   url: "/api/token/refresh",
+//   //   headers: {
+//   //     Authorization: `Bearer ${accessToken}`,
+//   //   }})
+//   const test = 'test'
+//   console.log(test)
 //   return {
-//     props: {},
-//   };
+//     props: {data : accessToken, test : test}
+//   }
 // }
-MyApp.getInitialProps = async (ctx) => {
-  const cookie = new Cookies();
-  const test = cookie.get("accessToken");
-  console.log(test);
-  // console.log(axios.defaults.headers.common.Authorization);
-  // console.log("******************************");
-  // console.log(ctx?.ctx?.req?.header);
-
-  // console.log("#################");
-
-  // console.log( axios.defaults.headers.common[
-  //   "Authorization"
-  // ])
-  // const { ctx, Component } = context;
-  // let pageProps = {title : 123123};
-  // console.log(ctx?.ctx?.req?.headers?.cookie)
-
-  axios({
-    method: "get",
-    url: "/api/token/refresh",
-    headers: {
-      Authorization: `Bearer ${test}`,
-    },
-  }).then((res) => console.log(res));
-  return {};
-};
+// MyApp.getInitialProps = async (ctx) => {
+//   console.log("ctx" , ctx)
+//   console.log("Cookie ctx" , cookies(ctx))
+//   const cookie = new Cookies();
+//   const accessToken = cookie.get("accessToken");
+ 
+//   try {
+//     axios({
+//       method: "get",
+//       url: "/api/token/refresh",
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     }).then((res) => console.log(res.data));
+//   } catch(e) {
+//     console.log("error", e)
+//   }
+//    return {};
+// };

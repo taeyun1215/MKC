@@ -10,7 +10,7 @@ import { useCookies } from "react-cookie";
 import cookie from "react-cookies";
 import { HTTP_ONLY } from "../../config/config";
 
-export default function Signiin() {
+export default function Signiin(props) {
   const router = useRouter();
   const dispatch = useDispatch();
   const { register, handleSubmit } = useForm({ mode: "onChange" });
@@ -22,9 +22,9 @@ export default function Signiin() {
 
     form.append("username", data.username);
     form.append("password", data.password);
-
     try {
       await axios.post("/api/login", form).then((res) => {
+        console.log(res)
         if (res.data.success === true) {
           dispatch(isLog(true));
           // dispatch(nickname(res.data.nickname));
@@ -40,10 +40,10 @@ export default function Signiin() {
             httpOnly: HTTP_ONLY,
             path: "/",
           });
-          router.push("/main");
+          router.push("/");
         } else {
           console.log(res);
-          alert("아이디나 비밀번호가 일치하지 않습니다. 다시 시도해주세요.");
+          // alert(res.data.error[0].message);
         }
       });
     } catch (e) {
@@ -97,7 +97,7 @@ export default function Signiin() {
         </button>
       </form>
       <div className="sign_Etc_Btn">
-        <button>아이디 찾기</button>
+        <button onClick={() => router.push('/user/idFind')}>아이디 찾기</button>
         <span>|</span>
         <button>비밀번호 찾기</button>
         <span>|</span>

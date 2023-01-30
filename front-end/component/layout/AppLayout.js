@@ -35,7 +35,7 @@ const AppLayout = ({ children }) => {
     <>
       <div className="header">
         <div className="header_wrap">
-          <Image src={logo} alt="yehLogo" className="heaeder_logo" onClick={() => router.push('/main')}/>
+          <Image src={logo} alt="yehLogo" className="heaeder_logo" onClick={() => router.push('/')}/>
           <div className="header_search">
             <button>
               <Image src={header_search} alt="search" />

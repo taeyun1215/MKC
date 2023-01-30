@@ -168,6 +168,13 @@
   }
 }
 
+.idFind {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 30px;
+    
+}
 // 이메일 인증 확인 중 모달
 :where(.css-dev-only-do-not-override-acm2ia).ant-modal-root .ant-modal-mask {
   background-color: black !important;

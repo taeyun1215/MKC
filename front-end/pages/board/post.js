@@ -1,6 +1,7 @@
 import { useS3Upload } from "next-s3-upload";
 
-export default function Post() {
+export default function Post({props}) {
+  console.log(props)
   let { uploadToS3 } = useS3Upload();
 
   let handleFileChange = async (event) => {

@@ -38,7 +38,7 @@ export default function SignupComplete() {
   };
   const handleOnOk = () => {
     setIsModal(false);
-    router.push("/main");
+    router.push("/");
   }
   return (
     <>
