@@ -1,19 +1,19 @@
 /** @type {import('next').NextConfig} */
 const path = require('path')
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: "/",
-  //       destination: "/main",
-  //       permanent: false
-  //     }
-  //   ]
-  // }
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/main",
+        permanent: false
+      }
+    ]
+  }
   // async rewrites() {
   //   return [
   //     {

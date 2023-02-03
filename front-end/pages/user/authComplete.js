@@ -8,8 +8,8 @@ export default function SignupComplete() {
 
   useEffect(() => {
     const params = router.query
-    console.log(params)
-    // axios.get('http://130.162.159.231:80080/api/check-email-code')    
+    console.log(router.query)
+    axios.get('/api/check-email-code')    
     }, [router.query])
     
   return (

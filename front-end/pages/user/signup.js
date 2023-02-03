@@ -53,7 +53,9 @@ export default function Signup() {
           console.log(res)
           if (res.data.success === true) {
             const token = res.data.data.access_token;
-            cookie.save("userToken", token);
+            cookie.save("userToken", token , {
+              path : '/'
+            });
             router.push("/user/signupComplete");
           } else if (res.data.success === false) {
             alert(res.data.error[0].message);
@@ -124,3 +126,11 @@ export default function Signup() {
     </div>
   );
 }
+export async function getServerSideProps(ctx) {
+  return {
+      props: {
+        name : "signup",
+        data : null  
+      },
+    } 
+  }

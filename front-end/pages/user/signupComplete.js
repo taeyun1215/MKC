@@ -21,7 +21,8 @@ export default function SignupComplete() {
             'Content-Type': 'application/json'
           },
         }).then((res) => {
-          if(res.data.msg === 'ok') {
+          console.log(res)
+          if(res.data.success) {
              setIsModal(true);
              cookie.remove('userToken', {path : '/'}, 1000)
           } else {

@@ -1,7 +1,12 @@
 import { useS3Upload } from "next-s3-upload";
-
-export default function Post({props}) {
-  console.log(props)
+import cookies from "next-cookies";
+import axios from "axios";
+import getToken from "../auth/getToken";
+import { useRecoilValue } from "recoil";
+import { nameState } from "../../store/states";
+export default function Post(props) {
+  // console.log(props)
+  const test = useRecoilValue(nameState)
   let { uploadToS3 } = useS3Upload();
 
   let handleFileChange = async (event) => {
@@ -29,4 +34,16 @@ export default function Post({props}) {
     
     </div>
   );
+}
+
+export async function getServerSideProps(ctx) {
+  const allCookies = cookies(ctx);
+  const res = await getToken(allCookies.accessToken, allCookies.refreshToken)
+  const data = res.data
+  return {
+    props: {
+      name : "board",
+      data : data  
+    },
+  };
 }

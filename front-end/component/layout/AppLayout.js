@@ -2,16 +2,23 @@ import logo from "../../asset/images/logo.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import header_search from "../../asset/images/header_search.png";
-import { useSelector , useDispatch} from "react-redux";
 import { Dropdown, Button } from 'antd';
-import { isLog } from "../../reducer/user";
+import {  useRecoilState } from "recoil";
+import { nameState , logginState} from "../../store/states";
+import cookie from "react-cookies";
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const Loggin = useSelector((state) => state.IsLog);
-  const Nickname = useSelector((state) => state.Nickname);
+  const [userName, setuserName] = useRecoilState(nameState);
+  const [IsLoggin, setIsLoggin] = useRecoilState(logginState);
   
+  const logout = () => {
+    setIsLoggin(false);
+    setuserName(null)
+    cookie.remove('accessToken');
+    cookie.remove('refreshToken');
+  }
+
  const items = [
    {
      key: '1',
@@ -24,9 +31,7 @@ const AppLayout = ({ children }) => {
    {
      key: '2',
      label: (
-       <a onClick={() => dispatch(isLog(false))}>
-         
-         로그아웃</a>
+       <a onClick={() => logout()}>로그아웃</a>
      ),
    },
   
@@ -47,12 +52,12 @@ const AppLayout = ({ children }) => {
           </div>
         </div>
         <div className="header_signBtn">
-          {Loggin ? (
+          {IsLoggin ? (
            <Dropdown menu={{ items }} placement="bottom">
-           <Button>{Nickname}</Button>
+           <Button>{userName}</Button>
          </Dropdown>
           ) : (
-            <div>
+          <div>
             <button
               onClick={() => router.push("/user/signin")}
               className="header_signin"
@@ -67,14 +72,13 @@ const AppLayout = ({ children }) => {
               회원가입
             </button>
             </div>
-           )}
-          <button
+            )} 
+           <button
             onClick={() => router.push("/board/post")}
             className="header_write"
           >
             글쓰기
           </button>
-          {/* <span onClick={() => router.push("/user/signup")}>회원가입</span> */}
         </div>
       </div>
       {children}
