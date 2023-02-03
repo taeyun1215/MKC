@@ -25,6 +25,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
         ErrorObject errorObject = ErrorObject.builder().code("notfound_user").message("해당 유저 정보를 찾을 수 없습니다").build();
         ReturnObject returnObject = ReturnObject.builder().success(false).error(errorObject).build();
 
+        httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
         OutputStream out = httpServletResponse.getOutputStream();
         ObjectMapper mapper = new ObjectMapper();

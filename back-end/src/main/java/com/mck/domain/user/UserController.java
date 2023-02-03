@@ -280,5 +280,4 @@ public class UserController {
         token.put("refresh_token", refresh_token);
         return token;
     }
-
 }

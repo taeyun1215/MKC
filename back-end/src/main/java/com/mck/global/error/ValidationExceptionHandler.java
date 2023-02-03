@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// valid 검증 에러 핸들링
 @ControllerAdvice
 public class ValidationExceptionHandler extends ResponseEntityExceptionHandler {
     /* response 예제

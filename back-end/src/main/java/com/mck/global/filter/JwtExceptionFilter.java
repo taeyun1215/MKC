@@ -40,15 +40,13 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         String message = "유효하지 않은 토큰";
         String error = "Unauthorized";
 
-        final Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        if(ex.getMessage() == "invalid.signature"){
+        if(ex.getMessage() == "invalid_signature"){
             message = "잘못된 서명";
             error = ex.getMessage();
-        } else if(ex.getMessage() == "expired.token"){
+        } else if(ex.getMessage() == "expired_token"){
             message = "만료된 토큰";
             error = ex.getMessage();
-        } else if(ex.getMessage() == "invalid.token"){
+        } else if(ex.getMessage() == "invalid_token"){
             message = "유효하지 않은 토큰";
             error = ex.getMessage();
         }
@@ -58,7 +56,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         returnObject = ReturnObject.builder().success(false).error(errorObjectArrayList).build();
 
         final ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(res.getOutputStream(), body);
+        mapper.writeValue(res.getOutputStream(), returnObject);
         res.setStatus(HttpServletResponse.SC_OK);
     }
 }

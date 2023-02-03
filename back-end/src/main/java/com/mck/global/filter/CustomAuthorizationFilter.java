@@ -70,16 +70,16 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
                 } catch (SignatureVerificationException e) {
                     log.info("Invalid JWT signature");
-                    throw new JwtException("invalid.signature");
+                    throw new JwtException("invalid_signature");
                 } catch (TokenExpiredException e) {
                     log.info("Expired JWT token");
-                    throw new JwtException("expired.token");
+                    throw new JwtException("expired_token");
                 } catch (InvalidClaimException e){
                     log.info("Invalid JWT token");
-                    throw new JwtException("invalid.token");
+                    throw new JwtException("invalid_token");
                 } catch (Exception e) {
                     log.error("로그인 에러 : {}", e.getMessage());
-                    throw new JwtException("invalid.token");
+                    throw new JwtException("invalid_token");
                 }
             } else {
                 // 토큰 정보가 없으면 다음 필터 진행
