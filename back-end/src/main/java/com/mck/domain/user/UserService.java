@@ -2,6 +2,7 @@ package com.mck.domain.user;
 
 import com.mck.domain.role.Role;
 import com.mck.domain.user.dto.UserSignUpDto;
+import com.mck.domain.user.dto.UserUpdateDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

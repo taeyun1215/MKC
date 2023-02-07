@@ -1,18 +1,18 @@
 environments:
   dev:
-    url: http://localhost:8080
+    url: http://localhost:3000
   product:
-    url: http://localhost:8080
+    url: http://localhost:3000
 
 spring:
   profiles:
     active: dev
   datasource:
-    url: jdbc:mariadb://localhost:3306/mkc
+    url: jdbc:mariadb://39.117.201.199:3306/mkc
 #    username: mkc
 #    password: sve4SBB54H7Q
-    username: root
-    password: k3744274!
+    username: guhyeon
+    password: Ps$k0O^IA7pM
 
 #spring:
 #  profiles:
@@ -45,7 +45,7 @@ spring:
 
   redis:
     port: 6379
-    host: 127.0.0.1
+    host: 39.117.201.199
     username: root
     password: 3iZXb4AK5dH5
 
@@ -54,3 +54,8 @@ file:
     path: C:/Users/tylee/Desktop/image/
 # todo : aws s3 버켓에 추가하기
 # todo : cloudflare 라이브러리 다운 받고 추가하기
+
+property:
+  secretKey: pvxmdnogszqqakzssfvvivldk
+  tokenExpiresTime: 60
+  refreshTokenExpiresTime: 120

@@ -20,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,11 +90,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         com.mck.domain.user.User userDetail = userRepo.findByUsername(user.getUsername());
 
-        Map<String, Object> body = new HashMap<>();
-        Map<String, String> token = new HashMap<>();
+        Map<String, Object> token = new HashMap<>();
         token.put("access_token", access_token);
         token.put("refresh_token", refresh_token);
-        token.put("emailVerified", String.valueOf(userDetail.isEmailVerified()));
+        token.put("emailVerified", userDetail.isEmailVerified());
         token.put("nickname", userDetail.getNickname());
         response.setContentType(APPLICATION_JSON_VALUE);
 

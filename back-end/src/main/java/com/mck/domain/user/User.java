@@ -2,6 +2,8 @@ package com.mck.domain.user;
 
 import com.mck.domain.role.Role;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
