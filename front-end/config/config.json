@@ -1,6 +1,6 @@
 {
   "development": {
-    "BACKEND_URL": "http://130.162.159.231:8080",
+    "BACKEND_URL": "http://43.201.144.113:8080",
     "HTTP_ONLY": false
   },
   "production": {

@@ -4,17 +4,14 @@ import { useRouter } from "next/router";
 import header_search from "../../asset/images/header_search.png";
 import { Dropdown, Button } from 'antd';
 import {  useRecoilState } from "recoil";
-import { nameState , logginState} from "../../store/states";
+import { userState } from "../../store/states";
 import cookie from "react-cookies";
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
-  const [userName, setuserName] = useRecoilState(nameState);
-  const [IsLoggin, setIsLoggin] = useRecoilState(logginState);
-  
+  const [user, setUser] = useRecoilState(userState);
   const logout = () => {
-    setIsLoggin(false);
-    setuserName(null)
+    setUser((prev) => ({ ...prev, name: null , loggin: false}))
     cookie.remove('accessToken');
     cookie.remove('refreshToken');
   }
@@ -52,9 +49,9 @@ const AppLayout = ({ children }) => {
           </div>
         </div>
         <div className="header_signBtn">
-          {IsLoggin ? (
+          {user.loggin ? (
            <Dropdown menu={{ items }} placement="bottom">
-           <Button>{userName}</Button>
+           <Button>{user.name}</Button>
          </Dropdown>
           ) : (
           <div>

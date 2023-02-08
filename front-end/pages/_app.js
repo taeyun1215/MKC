@@ -7,6 +7,7 @@ const AppLayout = dynamic(() => import('../component/layout/AppLayout'), { ssr: 
 
 function MyApp({ Component, pageProps}) {
   axios.defaults.baseURL = "http://130.162.159.231:8080";
+  // 43.201.144.113
   axios.defaults.withCredentials = true;
 
   function PageRouter() {
@@ -36,5 +37,4 @@ function MyApp({ Component, pageProps}) {
     </>
   );
 }
-
 export default MyApp;

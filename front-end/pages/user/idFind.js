@@ -16,7 +16,7 @@ export default function idFind() {
             email : id
         }
         try {
-            const res = await axios.get('http://130.162.159.231:8080/api/username', {params: data})
+            const res = await axios.get('/api/username', {params: data})
             if(res.data.success) alert('가입한 이메일 주소로 아이디가 전송되었습니다.')
             else alert(res.data.error.message)
         } catch(e) {

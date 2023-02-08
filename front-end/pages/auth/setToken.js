@@ -2,7 +2,6 @@ import cookie from "react-cookies";
 import { HTTP_ONLY } from "../../config/config";
 
 export default async function setToken (props) {
-    console.log(props)
     const accessToken = props.data.access_token
     const refreshToken = props.data.refresh_token
 
@@ -19,9 +18,7 @@ export default async function setToken (props) {
             httpOnly: HTTP_ONLY,
             path: "/",
         });
-    } else {
-        console.log('test')
-    }
+    } 
 
     return (
         <>

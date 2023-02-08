@@ -48,12 +48,12 @@ export default function Signup() {
   const onSubmit = async (data) => {
     try {
       await axios
-        .post("http://130.162.159.231:8080/api/user", data)
+        .post("/api/user", data)
         .then((res) => {
           console.log(res)
           if (res.data.success === true) {
             const token = res.data.data.access_token;
-            cookie.save("userToken", token , {
+            cookie.save("accessToken", token , {
               path : '/'
             });
             router.push("/user/signupComplete");

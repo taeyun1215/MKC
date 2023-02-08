@@ -5,34 +5,28 @@ import Image from "next/image";
 import axios from "axios";
 import cookie from "react-cookies";
 import { HTTP_ONLY } from "../../config/config";
-import { nameState, logginState, emailAuthState } from "../../store/states";
+import { userState } from "../../store/states";
 import { useSetRecoilState } from "recoil";
 
 export default function Signiin(props) {
   const router = useRouter();
-  const setNameState = useSetRecoilState(nameState)
-  const setLogginState = useSetRecoilState(logginState)
-  const setemailAuthState = useSetRecoilState(emailAuthState)
+  const setUser = useSetRecoilState(userState)
 
   const { register, handleSubmit } = useForm({ mode: "onChange" });
-  // const [autoLogCheck, setAutoLogCheck] = useState(null); //자동 로그인 상태
 
   const expires = new Date()
   expires.setMinutes(expires.getMinutes() + 1);
   // expires.setDate(Date.now() + 1000 * 60)
   const onSubmit = async (data) => {
-    const form = new FormData();
-
-    form.append("username", data.username);
-    form.append("password", data.password);
+    const formData = new FormData();
+    formData.append("username", data.username);
+    formData.append("password", data.password);
     try {
-      await axios.post("/api/login", form).then((res) => {
+      await axios.post("/api/login", formData).then((res) => {
         console.log(res)
         if (res.data.success === true) {
           const response = res.data.data;
-          setNameState(response.nickname)
-          setemailAuthState(response.emailVerified)
-          setLogginState(true)
+          setUser({name : response.nickname , loggin : true, emailAuth : response.emailVerified})
           const accessToken = response.access_token;
           const refreshToken = response.refresh_token;
           axios.defaults.headers.common[
@@ -106,6 +100,8 @@ export default function Signiin(props) {
       </form>
       <div className="sign_Etc_Btn">
         <button onClick={() => router.push('/user/idFind')}>아이디 찾기</button>
+        <span>|</span>
+        <button>비밀번호 찾기</button>
         <span>|</span>
         <button onClick={() => router.push("/user/signup")}>회원가입</button>
       </div>

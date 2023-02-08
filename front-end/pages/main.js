@@ -2,20 +2,24 @@ import cookies from "next-cookies";
 import getToken from "./auth/getToken";
 import setToken from "./auth/setToken";
 import { useRouter } from "next/router";
-
-// const [userName, setuserName] = useRecoilState(nameState);
-
+import { userState } from "../store/states";
+import { useRecoilValue , useResetRecoilState } from "recoil";
 export default function main(props) {
+  const reset = useResetRecoilState(userState)
+  const loggin = useRecoilValue(userState).loggin
   const router = useRouter();
-  // if(props.data === null) {
-  //   const alert = confirm('세션이 만료되었습니다. 다시 로그인 후 시도해 주세요')
-  //   if(alert) {
-  //     router.push("/user/signin");
-  //   } else {
-  //     router.push("/");
-  //   }
-  // } else setToken(props.data)
-  if(props.data !== null) setToken(props.data)
+
+  if(loggin && props.data === null) {
+    reset();
+    const Confirm = confirm('세션이 만료되었습니다. 다시 로그인 후 시도해 주세요')
+      if(Confirm) {
+          router.push("/user/signin");
+        } else {
+            router.push("/");
+    }
+  } else if(loggin && props.data !== null) {
+    setToken(props.data)
+  }
   return <div></div>;
 }
 
