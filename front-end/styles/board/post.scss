@@ -52,6 +52,7 @@
       padding: 0;
     }
   }
+ 
   .postBtn {
     display: flex;
     justify-content: flex-end;
@@ -94,11 +95,13 @@
 :where(.css-dev-only-do-not-override-acm2ia).ant-upload-wrapper .ant-upload-drag .ant-upload {
   padding: 10px 0 !important;
 }
+
 :where(.css-dev-only-do-not-override-acm2ia).ant-upload-wrapper .ant-upload-list {
   height: 100px;
   overflow-y: scroll;
   margin-top: 10px;
 }
+
 :where(.css-dev-only-do-not-override-acm2ia).ant-upload-wrapper .ant-upload-list::-webkit-scrollbar {
   width: 10px;  /* 스크롤바의 너비 */
 }
@@ -106,13 +109,11 @@
 :where(.css-dev-only-do-not-override-acm2ia).ant-upload-wrapper .ant-upload-list::-webkit-scrollbar-thumb {
   height: 30%; /* 스크롤바의 길이 */
   background: $main_color; /* 스크롤바의 색상 */
-  
   border-radius: 10px;
 }
 
 :where(.css-dev-only-do-not-override-acm2ia).ant-upload-wrapper .ant-upload-list::-webkit-scrollbar-track {
   background: #ececec; 
-
 }
 
 .ant-upload-drag-icon {
@@ -122,3 +123,4 @@
 .ant-upload-hint {
   margin: 0 !important;
 }
+

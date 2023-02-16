@@ -71,7 +71,7 @@ const AppLayout = ({ children }) => {
             </div>
             )} 
            <button
-            onClick={() => router.push("/board/post")}
+            onClick={() => router.push("/post/new")}
             className="header_write"
           >
             글쓰기

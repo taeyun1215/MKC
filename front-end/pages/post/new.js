@@ -1,4 +1,5 @@
 import cookies from "next-cookies";
+import cookie from "react-cookies";
 import axios from "axios";
 import getToken from "../auth/getToken";
 import { useRouter } from "next/router";
@@ -6,15 +7,17 @@ import { userState } from "../../store/states";
 import { useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
 import { Button, Upload} from 'antd';
-import { InboxOutlined } from "@ant-design/icons";
+import { StarOutlined, InboxOutlined } from "@ant-design/icons";
 
 
 export default function Post(props) {
   const user = useRecoilValue(userState)
   const router = useRouter();
   const { Dragger } = Upload;
+  const [title, setTitle] = useState('');
+  const [contents, setContents] = useState('');
   const [images, setImages] = useState([]);
-
+  
 
   useEffect(() => {
     if(!user.loggin) {
@@ -31,42 +34,44 @@ export default function Post(props) {
   }, [])
 
   const handleOnSubmit = async () => {
+    const token = cookie.load("accessToken");
     const formData = new FormData()
-    images.forEach((image) => formData.append('files', image))
-    // formData.append(
-    //   'data',
-    //   JSON.stringify({
-    //       title: titleInput,
-    //       content: contentInput,
-    //   }),
-    // );
-    console.log(formData)
+    images.forEach((image) => formData.append('imageFiles', image))
+    formData.append(
+      'data',
+      JSON.stringify({
+          title: title,
+          content: contents,
+      }),
+    );
     try {
         // axios를 이용한 post 요청. 헤더를 multipart/form-data 로 한다.
         await axios.post('/post/new', formData, {
-            headers: {'Content-Type': 'multipart/form-data', charset: 'utf-8'},
-        });
-        alert('게시글이 등록되었습니다');
+            headers: {
+            'Authorization' : `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+            charset: 'utf-8'
+          },
+        }).then((res) => console.log(res));
+        // alert('게시글이 등록되었습니다');
     } catch (err) {
+        console.log(err)
         // alert(err.data.message || '게시글 등록에 실패했습니다');
     }
   }
 
   const handleFileChange = async (event) => {
     setImages([...images, ...event.fileList])
-    // setImages([...images, ...event.target.files])
   };
-
-  // https://maruzzing.github.io/study/react/%EB%A6%AC%EC%95%A1%ED%8A%B8%EB%A1%9C-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%8D%94-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0/
-  // https://velog.io/@hjkdw95/next-s3-upload%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC-%EB%8B%A4%EC%A4%91-%ED%8C%8C%EC%9D%BC-%EC%97%85%EB%A1%9C%EB%93%9C-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0
 
   const uploads = {
     name: 'file',
-    multiple: true,
+    multiple: true
   }
-
+  
   const handleOnCancle = () => {
-    console.log('test')
+    setTitle('');
+    setContents('')
   }
 
   return (  
@@ -76,23 +81,24 @@ export default function Post(props) {
           placeholder="제목을 입력해 주세요"
           name="title"
           autoComplete="off"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
-        <textarea placeholder="내용을 입력해 주세요" />
-        {/* <div className="postFile">
-          <label htmlFor="file">첨부파일</label>          
-          <input type="file" id="file" multiple="multiple" accept="image/jpg,image/png,image/jpeg,image/gif"  onChange={handleFileChange} />
-        </div> */}
-      <Dragger {...uploads} onChange={handleFileChange}>
-        <div style={{display:'flex', justifyContent:'center', gap:'5px'}}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
+        <textarea placeholder="내용을 입력해 주세요" 
+          value={contents}
+          onChange={(e) => setContents(e.target.value)} />
+        <Dragger {...uploads} onChange={handleFileChange} style={{backgroundColor:'red'}}>
+          <div style={{display:'flex', justifyContent:'center', gap:'5px'}}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">파일 업로드</p>
+          </div>
+          <p className="ant-upload-hint">
+          첨부할 파일을 선택하거나 마우스로 드래그 해주세요.
           </p>
-          <p className="ant-upload-text">파일 업로드</p>
-        </div>
-        <p className="ant-upload-hint">
-         첨부할 파일을 선택하거나 마우스로 드래그 해주세요.
-        </p>
-      </Dragger>
+        </Dragger>
+    
      
       <div className="postBtn">
         <button className="cancle" onClick={handleOnCancle}>취소</button>
@@ -105,12 +111,19 @@ export default function Post(props) {
 
 export async function getServerSideProps(ctx) {
   const allCookies = cookies(ctx);
-  const res = await getToken(allCookies.accessToken, allCookies.refreshToken)
-  const data = res.data
-  return {
+  if(allCookies.refreshToken) {
+    const res = await getToken(allCookies.accessToken, allCookies.refreshToken)
+    const data = res.data
+    return {
+      props: {
+        name : "post",
+        data : data  
+      },
+    };
+  } else return {
     props: {
-      name : "board",
-      data : data  
+      name : "post",
+      data : null  
     },
-  };
+  } 
 }

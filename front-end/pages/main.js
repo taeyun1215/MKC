@@ -8,7 +8,6 @@ export default function main(props) {
   const reset = useResetRecoilState(userState)
   const loggin = useRecoilValue(userState).loggin
   const router = useRouter();
-
   if(loggin && props.data === null) {
     reset();
     const Confirm = confirm('세션이 만료되었습니다. 다시 로그인 후 시도해 주세요')
