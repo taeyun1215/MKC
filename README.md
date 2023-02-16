@@ -19,6 +19,7 @@
 - MariaDB
 - React
 - Next.js
+- Nginx
 - AWS
 - Jenkins
 - Docker
