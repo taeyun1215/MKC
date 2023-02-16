@@ -20,6 +20,8 @@
 - React
 - Next.js
 - AWS
+- Jenkins
+- Docker
 
 ### 아키텍처
 <img width="791" alt="image" src="https://user-images.githubusercontent.com/65766105/204957133-3104fd7b-ced1-49e6-b651-d4f0c6062246.jpg">
