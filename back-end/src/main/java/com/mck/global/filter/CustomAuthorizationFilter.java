@@ -8,6 +8,7 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +36,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 // 사용자의 모든 요청을 가로채고 토큰을 찾아 처리한 다음 사용자가 특정 리소스에 액세스 할 수 있는지 여부를 결정하는 필터
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 사용자가 로그인을 시도한다면
@@ -50,7 +52,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 try {
                     // 토크만 추출 하도록 type부분 제거
                     String token = authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                    Algorithm algorithm = Algorithm.HMAC256("pvxmdnogszqqakzssfvvivldk".getBytes());
                     // JWT 검증용 객체 생성(토큰 생성할때와 동일한 알고리즘 적용)
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     // 토큰 검증

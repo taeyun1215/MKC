@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(User user) {
-        User findUser = userRepo.findByUsername(user.getUsername()).orElseThrow(() -> {
-            return new IllegalArgumentException("회원 정보를 찾을 수 없습니다.");
-        });
+//        User findUser = userRepo.findByUsername(user.getUsername()).orElseThrow(() -> {
+//            return new IllegalArgumentException("회원 정보를 찾을 수 없습니다.");
+//        });
 
         userRepo.save(user);
         log.info("유저 정보를 수정했습니다 : ", user.getUsername());
@@ -56,8 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(String username) {
         log.info("사용자 {}의 상세 정보를 가져왔습니다.", username);
-//        return userRepo.findByUsername(username);
-        return null;
+        return userRepo.findByUsername(username).get();
     }
 
     @Override

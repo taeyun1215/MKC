@@ -51,7 +51,7 @@ public class CommonUtil {
         return buffer.toString();
     }
 
-    public static Map<String, String> getToken(User user, HttpServletRequest request) {
+    public static Map<String, Object> getToken(User user, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 
         // 토큰 서명용 키 생성
@@ -80,9 +80,10 @@ public class CommonUtil {
                 // 토큰 서명
                 .sign(algorithm);
 
-        Map<String, String> token = new HashMap<>();
+        Map<String, Object> token = new HashMap<>();
         token.put("access_token", access_token);
         token.put("refresh_token", refresh_token);
+
         return token;
     }
 

@@ -86,7 +86,7 @@ public class UserController {
             User user = userService.newUser(userSignUpDto);
             User saveUser = userService.saveUser(user);
 
-            Map<String, String> token = commonUtil.getToken(user, request);
+            Map<String, Object> token = commonUtil.getToken(user, request);
 
             returnObject = ReturnObject.builder().success(true).data(token).build();
 
@@ -121,7 +121,7 @@ public class UserController {
                 String username = decodedJWT.getSubject();
                 User user = userService.getUser(username);
 
-                Map<String, String> token = commonUtil.getToken(user, request);
+                Map<String, Object> token = commonUtil.getToken(user, request);
 
                 returnObject = ReturnObject.builder().success(true).data(token).build();
 
