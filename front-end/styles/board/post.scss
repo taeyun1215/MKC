@@ -9,7 +9,7 @@
   @include center_sort;
   flex-direction: column;
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 45px;
 
   input {
     width: 98%;
@@ -19,9 +19,10 @@
     border-radius: 5px;
     font-size: 14px;
   }
+  
   textarea {
     width: 98%;
-    height: 300px;
+    height: 250px;
     border: 1px solid #dedede;
     border-radius: 5px;
     padding: 10px 0 0 10px;
@@ -76,7 +77,7 @@
       border: 2px solid $main_color;
       background-color: transparent;
     }
-  }
+  }  
 }
 
 :where(.css-dev-only-do-not-override-acm2ia).ant-upload-wrapper {
