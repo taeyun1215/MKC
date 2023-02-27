@@ -5,19 +5,25 @@ import getToken from "../auth/getToken";
 import { useRouter } from "next/router";
 import { userState } from "../../store/states";
 import { useRecoilValue } from "recoil";
-import { useEffect, useState } from "react";
-import { Button, Upload} from 'antd';
-import { StarOutlined, InboxOutlined } from "@ant-design/icons";
+import { useEffect, useRef, useState } from "react";
+import { Upload} from 'antd';
+import { InboxOutlined } from "@ant-design/icons";
+import { Modal } from 'antd';
 
 
-export default function Post(props) {
+export default function New(props) {
   const user = useRecoilValue(userState)
   const router = useRouter();
   const { Dragger } = Upload;
-  const [title, setTitle] = useState('');
-  const [contents, setContents] = useState('');
-  const [images, setImages] = useState([]);
   
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [images, setImages] = useState([]);
+  const [isModal, setIsModal] = useState(false);
+  const formData = new FormData()
+
+  const inputRefTitle = useRef(null)
+  const inputRefContent = useRef(null)
 
   useEffect(() => {
     if(!user.loggin) {
@@ -32,79 +38,91 @@ export default function Post(props) {
         } else router.push("/");
     }
   }, [])
-
+  
   const handleOnSubmit = async () => {
-    const token = cookie.load("accessToken");
-    const formData = new FormData()
-    images.forEach((image) => formData.append('imageFiles', image))
-    formData.append(
-      'data',
-      JSON.stringify({
-          title: title,
-          content: contents,
-      }),
-    );
-    try {
-        // axios를 이용한 post 요청. 헤더를 multipart/form-data 로 한다.
-        await axios.post('/post/new', formData, {
-            headers: {
-            'Authorization' : `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-            charset: 'utf-8'
-          },
-        }).then((res) => console.log(res));
-        // alert('게시글이 등록되었습니다');
-    } catch (err) {
-        console.log(err)
-        // alert(err.data.message || '게시글 등록에 실패했습니다');
+    if(title === '') {
+      return inputRefTitle.current.focus();
+    } else if(content === '') {
+      return inputRefContent.current.focus();
+    } else {
+        const token = cookie.load("accessToken");
+        const imageFiles = images.map((image) => image.originFileObj)
+
+        imageFiles.forEach(file => formData.append('imageFiles', file));
+        formData.append("title", title);
+        formData.append("content", content);
+
+      try {
+          // 이미지 전송을 위해 헤더를 multipart/form-data 로 한다.
+          await axios.post('/post/new', formData, {
+              headers: {
+              'Authorization' : `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }).then((res) => {
+            if(res.data.success) {
+              alert(res.data.data)
+              router.push("/")
+            } else {
+              alert('게시글 등록에 실패했습니다. 다시 시도해 주세요')
+            }
+
+          });
+      } catch (err) {
+          console.log(err)
+          alert(err.data.data);
+      }
     }
   }
-
-  const handleFileChange = async (event) => {
-    setImages([...images, ...event.fileList])
-  };
-
   const uploads = {
     name: 'file',
-    multiple: true
+    multiple: true,
+    maxCount : isModal ? 5 : null,
+    accept:'image/jpg,impge/png,image/jpeg,image/gif',
+    onChange : (info) => {
+      setImages(info.fileList)
+      if(info.fileList.length > 5) {
+        setIsModal(true);
+      }
+    },
   }
   
   const handleOnCancle = () => {
     setTitle('');
-    setContents('')
+    setContent('')
+    setImages(null);
   }
-
+  
   return (  
-    <div className="post">
-        <input
-          type="text"
-          placeholder="제목을 입력해 주세요"
-          name="title"
-          autoComplete="off"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+    <div className="post" >
+      <input
+        type="text"
+        placeholder="제목을 입력해 주세요"
+        name="title"
+        autoComplete="off"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        ref={inputRefTitle}
         />
-        <textarea placeholder="내용을 입력해 주세요" 
-          value={contents}
-          onChange={(e) => setContents(e.target.value)} />
-        <Dragger {...uploads} onChange={handleFileChange} style={{backgroundColor:'red'}}>
-          <div style={{display:'flex', justifyContent:'center', gap:'5px'}}>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">파일 업로드</p>
-          </div>
-          <p className="ant-upload-hint">
-          첨부할 파일을 선택하거나 마우스로 드래그 해주세요.
-          </p>
-        </Dragger>
-    
-     
+      <textarea placeholder="내용을 입력해 주세요" 
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        ref={inputRefContent}
+       />
+      <Dragger {...uploads} showUploadList={images.length > 0 ? true : false}>
+        <div style={{display:'flex', justifyContent:'center', gap:'5px'}}>
+          <p className="ant-upload-drag-icon"><InboxOutlined /></p>
+          <p className="ant-upload-text">파일 업로드</p>
+        </div>
+        <p className="ant-upload-hint">첨부할 파일을 선택하거나 마우스로 드래그 해주세요.</p>
+      </Dragger>
       <div className="postBtn">
         <button className="cancle" onClick={handleOnCancle}>취소</button>
         <button onClick={handleOnSubmit}>등록</button>
       </div>
-    
+      {isModal ? <Modal open={isModal} onOk={() => setIsModal(false)} onCancel={() => setIsModal(false)} cancelButtonProps={{ style: { display: 'none' } }} width='420px'>
+        <p>첨부 이미지는 최대 5장까지 가능합니다.</p>
+      </Modal> : null}
     </div>
   );
 }
