@@ -1,42 +1,48 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { userState } from "../store/states";
 import { useRecoilValue , useResetRecoilState } from "recoil";
 import { Pagination } from 'antd';
 import { EyeOutlined , CommentOutlined, LikeOutlined, FieldTimeOutlined} from "@ant-design/icons";
 import cookies from "next-cookies";
 import Image from "next/image";
-
-import getToken from "./auth/getToken";
-import setToken from "./auth/setToken";
 import axios from "axios";
+
+import getToken from "../component/utils/getToken";
+import setToken from "../component/utils/setToken";
+import { userState } from "../store/states";
 
 export default function main(props) {
   const reset = useResetRecoilState(userState)
-  const loggin = useRecoilValue(userState).loggin
+  const user = useRecoilValue(userState)
   const router = useRouter();
+
   const [postsData, setPostsData] = useState([])
   const [rankigData, setRankingData] = useState([])
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(1);
+  const [postsCount, setPostsCount] = useState(0);
+  const [test, setTest] = useState(false)
 
-  if(loggin && props.data === null) {
-    reset();
-    const Confirm = confirm('세션이 만료되었습니다. 다시 로그인 후 시도해 주세요')
-      if(Confirm) router.push("/user/signin");
-      else router.push("/");
-  } else if(loggin && props.data !== null) {
-    setToken(props.data)
-  }
-
-  // 실시간 인기글 데이터 통신
+  // 실시간 인기글 데이터 통신, 전체 글 개수 통신
   useEffect(() => {
-     async function getRankings() {
+      setToken({user, props}).then((res) => {
+        if(res === 'logout') {
+          reset();
+          router.push("/user/signin");
+        }
+      })
+      async function getRankings() {
       const res = await axios.get('/post/popular');
       if(res.data.success) setRankingData(res.data.data)
       else alert('잠시 후 다시 접속해주세요')
-    }
+      }
+      async function getPostsCount() {
+        const res = await axios.get('/post/allCount');
+        if(res.data.success) setPostsCount(res.data.data)
+        else alert('잠시 후 다시 접속해주세요')
+      }
     try {
       getRankings();
+      getPostsCount();
     } catch(e) {
       console.log(e)
       alert('잠시 후 다시 접속해주세요')
@@ -86,6 +92,7 @@ export default function main(props) {
   const DetailPosts = (id) => {
     router.push(`/post/${id}`)
   }
+  
   return (
     <>
     <div className="getPost">
@@ -130,7 +137,7 @@ export default function main(props) {
       </div>
     </div>
       <div className="pagination"> 
-        <Pagination current={current} onChange={(page) => setCurrent(page)} total={50} />
+        <Pagination current={current} onChange={(page) => setCurrent(page)} total={postsCount} />
       </div>
     </>
   )
