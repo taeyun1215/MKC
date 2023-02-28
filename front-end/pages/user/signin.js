@@ -1,28 +1,42 @@
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import logo from "../../asset/images/logo.png";
+import { useSetRecoilState } from "recoil";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import cookie from "react-cookies";
 import Image from "next/image";
 import axios from "axios";
-import cookie from "react-cookies";
+
+import logo from "../../asset/images/logo.png";
 import { HTTP_ONLY } from "../../config/config";
 import { userState } from "../../store/states";
-import { useSetRecoilState } from "recoil";
 
 export default function Signiin(props) {
   const router = useRouter();
   const setUser = useSetRecoilState(userState)
-
-  const { register, handleSubmit } = useForm({ mode: "onChange" });
-
+  
   const expires = new Date()
   expires.setMinutes(expires.getMinutes() + 1);
   // expires.setDate(Date.now() + 1000 * 60)
+  
+  const formSchema = yup.object({
+    username: yup
+    .string()
+    .required(""),
+    password: yup
+    .string()
+    .required("")
+  });
+  
+  
+  const { register, handleSubmit } = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("username", data.username);
     formData.append("password", data.password);
     try {
       await axios.post("/api/login", formData).then((res) => {
+        console.log(res)
         if (res.data.success === true) {
           const response = res.data.data;
           setUser({name : response.nickname , loggin : true, emailAuth : response.emailVerified})
@@ -52,16 +66,12 @@ export default function Signiin(props) {
     }
   };
 
-  const checkHandler = (e) => {
-    setAutoLogCheck(e.target.checked);
-  };
-
   return (
     <div className="sign" style={{ width: "25%", gap: 0 }}>
       <div className="sign_title">
         <Image src={logo} alt="yehLogo" />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="sign_contents">
+      <form onSubmit={handleSubmit(onSubmit)} className="sign_contents" >
         <label htmlFor="username">아이디</label>
         <input
           name="username"
@@ -69,7 +79,7 @@ export default function Signiin(props) {
           {...register("username")}
           placeholder="아이디를 입력해주세요"
           autoComplete="off"
-        />
+          />
         <label htmlFor="password">비밀번호</label>
         <input
           name="password"
@@ -77,17 +87,6 @@ export default function Signiin(props) {
           {...register("password")}
           placeholder="비밀번호를 입력해주세요"
         />
-        {/* <div className="auto_logged">
-          <label htmlFor="autoLog" className="auto_logged_label">
-            <input
-              type="checkbox"
-              id="autoLog"
-              onChange={(e) => checkHandler(e)}
-            />
-            <span className="on"></span>
-            자동 로그인
-          </label>
-        </div> */}
         <button
           type="submit"
           className="sign_Btn"

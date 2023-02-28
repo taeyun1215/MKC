@@ -1,14 +1,14 @@
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { useRecoilValue } from "recoil";
+import { Upload, Modal} from 'antd';
+import { InboxOutlined } from "@ant-design/icons";
 import cookies from "next-cookies";
 import cookie from "react-cookies";
 import axios from "axios";
-import getToken from "../auth/getToken";
-import { useRouter } from "next/router";
+
 import { userState } from "../../store/states";
-import { useRecoilValue } from "recoil";
-import { useEffect, useRef, useState } from "react";
-import { Upload} from 'antd';
-import { InboxOutlined } from "@ant-design/icons";
-import { Modal } from 'antd';
+import getToken from "../../component/utils/getToken";
 
 
 export default function New(props) {
@@ -25,7 +25,7 @@ export default function New(props) {
   const inputRefTitle = useRef(null)
   const inputRefContent = useRef(null)
 
-  useEffect(() => {
+  useEffect(() => {   
     if(!user.loggin) {
       const logginConfirm = confirm('로그인 후 이용 가능합니다. 로그인 페이지로 이동합니다.');
       if(logginConfirm) {
@@ -45,12 +45,12 @@ export default function New(props) {
     } else if(content === '') {
       return inputRefContent.current.focus();
     } else {
-        const token = cookie.load("accessToken");
-        const imageFiles = images.map((image) => image.originFileObj)
-
-        imageFiles.forEach(file => formData.append('imageFiles', file));
-        formData.append("title", title);
-        formData.append("content", content);
+      formData.append("title", title);
+      formData.append("content", content);
+      
+      const token = cookie.load("accessToken");
+      const imageFiles = images.map((image) => image.originFileObj);
+      imageFiles.forEach(file => formData.append('imageFiles', file));
 
       try {
           // 이미지 전송을 위해 헤더를 multipart/form-data 로 한다.

@@ -1,11 +1,12 @@
 import { useForm } from "react-hook-form";
-import logo from "../../asset/images/logo.png";
-import Image from "next/image";
-import axios from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useRouter } from "next/router";
+import * as yup from "yup";
+import axios from "axios";
+import Image from "next/image";
 import cookie from "react-cookies";
+
+import logo from "../../asset/images/logo.png";
 
 export default function Signup() {
   const router = useRouter();
@@ -50,7 +51,6 @@ export default function Signup() {
       await axios
         .post("/api/user", data)
         .then((res) => {
-          console.log(res)
           if (res.data.success === true) {
             const token = res.data.data.access_token;
             cookie.save("accessToken", token , {

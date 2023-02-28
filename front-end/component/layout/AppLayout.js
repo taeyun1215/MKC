@@ -1,15 +1,16 @@
 import logo from "../../asset/images/logo.png";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import header_search from "../../asset/images/header_search.png";
 import { Dropdown, Button } from 'antd';
-import {  useRecoilState } from "recoil";
+import { SearchOutlined } from "@ant-design/icons";
+import { useRecoilState } from "recoil";
 import { userState } from "../../store/states";
 import cookie from "react-cookies";
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
   const [user, setUser] = useRecoilState(userState);
+
   const logout = () => {
     setUser((prev) => ({ ...prev, name: null , loggin: false}))
     cookie.remove('accessToken');
@@ -40,7 +41,7 @@ const AppLayout = ({ children }) => {
           <Image src={logo} alt="yehLogo" className="heaeder_logo" onClick={() => router.push('/')}/>
           <div className="header_search">
             <button>
-              <Image src={header_search} alt="search" />
+              <SearchOutlined style={{fontSize:'22px', color:"#2b3089", fontWeight:'bold'}}/>
             </button>
             <input
               placeholder="관심있는 내용을 검색해보세요"
