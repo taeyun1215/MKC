@@ -12,6 +12,7 @@ const setToken = (props) => {
         })
     } 
     else if(user.loggin && data !== null) {
+        console.log('login')
         const accessToken = data.data.access_token
         const refreshToken = data.data.refresh_token
         const expires = new Date()
@@ -29,6 +30,9 @@ const setToken = (props) => {
             resolve('login')
         })
       }    
+    else return new Promise((resolve, reject) => {
+        resolve('notUser')
+    })
   }
   
   export default setToken

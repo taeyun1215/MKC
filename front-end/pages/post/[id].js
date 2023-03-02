@@ -4,10 +4,12 @@ import { useRecoilValue , useResetRecoilState } from "recoil";
 import axios from "axios";
 import cookies from "next-cookies";
 import cookie from "react-cookies";
+import Image from "next/image";
 
 import { userState } from "../../store/states";
 import getToken from "../../component/utils/getToken";
 import setToken from "../../component/utils/setToken";
+import CreateTime from "../../component/utils/createTime";
 
 export default function Details(props) {
     const router = useRouter();
@@ -39,15 +41,16 @@ export default function Details(props) {
             alert('잠시 후 다시 접속해주세요')
        }
     },[]);
-    
-    console.log(datailData)
     return (
         <div className="detailPost">
             <h2>{datailData.title}</h2>
-            <p>{datailData.createTime}</p>
-            <p>{datailData.view}</p>
-            <p>{datailData.content}</p>
+            <p>{CreateTime(datailData.createTime)}</p>
             <p>{datailData.writer}</p>
+            {/* {datailData.images[0] !== null ? datailData.images.map((i) => (
+              <Image src={i.imageUrl} key={i.id}/>
+            )) : null} */}
+            <p>{datailData.content}</p>
+            <p>{datailData.view}</p>
         </div>
     )
 }
