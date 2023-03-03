@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useRecoilValue , useResetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue , useResetRecoilState, useSetRecoilState } from "recoil";
 import { Pagination } from 'antd';
 import { EyeOutlined , CommentOutlined, LikeOutlined, FieldTimeOutlined} from "@ant-design/icons";
 import cookies from "next-cookies";
@@ -21,29 +21,23 @@ export default function main(props) {
   const [rankigData, setRankingData] = useState([])
   const [current, setCurrent] = useState(1);
   const [postsCount, setPostsCount] = useState(0);
-  const [test, setTest] = useState(false)
+
 
   // 실시간 인기글 데이터 통신, 전체 글 개수 통신
   useEffect(() => {
-      setToken({user, props}).then((res) => {
-        if(res === 'logout') {
-          reset();
-          router.push("/user/signin");
-        }
-      })
-      async function getRankings() {
-      const res = await axios.get('/post/popular');
-      if(res.data.success) setRankingData(res.data.data)
-      else alert('잠시 후 다시 접속해주세요')
+    setToken({user, props}).then((res) => {
+      if(res === 'logout') {
+        reset();
+        router.push("/user/signin");
       }
-      async function getPostsCount() {
-        const res = await axios.get('/post/allCount');
-        if(res.data.success) setPostsCount(res.data.data)
-        else alert('잠시 후 다시 접속해주세요')
-      }
+    })
+    async function getRankings() {
+    const res = await axios.get('/post/popular');
+    if(res.data.success) setRankingData(res.data.data)
+    else alert('잠시 후 다시 접속해주세요')
+    }
     try {
       getRankings();
-      getPostsCount();
     } catch(e) {
       console.log(e)
       alert('잠시 후 다시 접속해주세요')
@@ -55,7 +49,10 @@ export default function main(props) {
     router.push(`/main?page=${current}`)
     async function getPosts() {
       const res = await axios.get('/post/all', {params : {page : current}});
-      if(res.data.success) setPostsData(res.data.data.posts)
+      if(res.data.success) {
+        setPostsCount(res.data.data.postCount)
+        setPostsData(res.data.data.posts)
+      }
       else alert('잠시 후 다시 접속해주세요')
     }  
     try {
@@ -69,7 +66,7 @@ export default function main(props) {
   const DetailPosts = (id) => {
     router.push(`/post/${id}`)
   }
-  
+
   return (
     <>
     <div className="getPost">
@@ -85,14 +82,15 @@ export default function main(props) {
       <div className="getPostsBox_wrap">
         {postsData.map((i) => (
           <div key={i.id} className="getPostsBox" onClick={() => DetailPosts(i.id)}>
-            {CreateTime(i.createTime).indexOf('분전') > 0  || CreateTime(i.createTime).indexOf('시간전') > 0 
+            {CreateTime(i.createTime).indexOf('방금전') > 0  
+              || CreateTime(i.createTime).indexOf('분전') > 0  
+              || CreateTime(i.createTime).indexOf('시간전') > 0 
               ? <p className="NewPosts">NEW</p>
               : null}
             <div className="mainInfo">
               <div className="mainInfoText">
                 <p className="mainInfoTitle">{i.title}</p>  
                 <p className="mainInfoContents">{i.content}</p>
-                <p className="mainInfoWriter">{i.writer}</p>
               </div>
               {i.image.firstImageUrl !== null ? (
                 <div className="ImageInfo">
@@ -104,10 +102,13 @@ export default function main(props) {
               ) : null}
             </div>
             <div className="addInfo">
-              <p><EyeOutlined className="addInfoIcons"/> {i.view} Views</p>
-              <p><CommentOutlined className="addInfoIcons"/> {i.comments} Comments</p>
-              <p><LikeOutlined className="addInfoIcons"/> {i.likes} Likes</p>
-              <p><FieldTimeOutlined className="addInfoIcons"/>{CreateTime(i.createTime)}</p>
+              <p className="addInfoWriter">{i.writer}</p>
+              <div className="addInfo_wrap">
+                <p><FieldTimeOutlined className="addInfoIcons"/>{CreateTime(i.createTime)}</p>
+                <p><EyeOutlined className="addInfoIcons"/> {i.view}</p>
+                <p><CommentOutlined className="addInfoIcons"/> {i.comments}</p>
+                <p><LikeOutlined className="addInfoIcons"/> {i.likes}</p>
+              </div>
             </div>
           </div>
         ))}

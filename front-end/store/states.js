@@ -9,5 +9,10 @@ const userState = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
+const themeState = atom({
+  key : 'themeState',
+  default : 'light',
+  effects_UNSTABLE: [persistAtom],
+})
 
-export { userState};
+export { userState, themeState};
