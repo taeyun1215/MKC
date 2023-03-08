@@ -8,11 +8,11 @@ import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
 
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme, GlobalStyles } from "../component/utils/themeConfig" 
-
+// import AppLayout from '../component/layout/AppLayout'
 const AppLayout = dynamic(() => import('../component/layout/AppLayout'), { ssr: false })
 
 function MyApp({ Component, pageProps}) {
-  // axios.defaults.baseURL = "http://43.201.144.113:8080";
+  axios.defaults.baseURL = "http://43.201.144.113:8080";
   axios.defaults.withCredentials = true;
 
   const [theme, setTheme] = useState(null);

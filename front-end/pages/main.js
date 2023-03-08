@@ -16,6 +16,7 @@ import getToken from "../component/utils/getToken";
 import setToken from "../component/utils/setToken";
 import CreateTime from "../component/utils/createTime";
 import { keywordState, pageState, userState } from "../store/states";
+import Rank from "./post/rank";
 
 export default function Main(props) {
   const reset = useResetRecoilState(userState);
@@ -65,6 +66,7 @@ export default function Main(props) {
   return (
     <>
       <div className="getPost">
+        <Rank/>
         <div className="getPostsBox_wrap">
           {postsData.map((i) => (
             <div
