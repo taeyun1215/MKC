@@ -80,6 +80,19 @@
   }  
 }
 
+:where(.css-acm2ia).ant-upload-wrapper .ant-upload-drag p.ant-upload-drag-icon .anticon {
+  color: $main_color;
+  font-size: 28px !important;
+}
+
+:where(.css-acm2ia).ant-upload-wrapper .ant-upload-drag:not(.ant-upload-disabled):hover {
+  border-color: $main_color !important;
+}
+
+:where(.css-acm2ia).ant-upload-wrapper {
+  width: 100%;
+}
+
 :where(.css-dev-only-do-not-override-acm2ia).ant-upload-wrapper {
   width: 100%;
 }

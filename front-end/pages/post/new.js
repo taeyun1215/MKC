@@ -22,7 +22,6 @@ export default function New(props) {
   const [isModal, setIsModal] = useState(false);
 	const [cookie, setCookie, removecookie] = useCookies(['refreshToken','accessToken']);
   const formData = new FormData()
-
   const inputRefTitle = useRef(null)
   const inputRefContent = useRef(null)
 
@@ -71,20 +70,19 @@ export default function New(props) {
       }
     }
   }
-
   const uploads = {
     name: 'file',
     multiple: true,
     maxCount : isModal ? 5 : null,
+    action : "https://www.mocky.io/v2/5cc8019d300000980a055e76",
     accept:'image/jpg,impge/png,image/jpeg,image/gif',
     onChange : (info) => {
-      setImages(info.fileList)
-      if(info.fileList.length > 5) {
-        setIsModal(true);
-      }
+      // if(info.fileList.length > 5) setIsModal(true);
+      console.log(info.file.status)
+      if(info.file.status === 'done') setImages(info.fileList)
     },
   }
-  
+
   const handleOnCancle = () => {
     setTitle('');
     setContent('')

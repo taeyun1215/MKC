@@ -12,7 +12,7 @@ const setToken = async (props) => {
 
     const response = await getToken(cookie.refreshToken)
     if(response.data.success) {
-        setCookie('accessToken', response.data.data.access_token, {expires : expires, httpOnly : true} )
+        setCookie('accessToken', response.data.data.access_token, {expires : expires, httpOnly : false} )
         return new Promise((resolve, reject) => {
             resolve('userLogin')
         })
