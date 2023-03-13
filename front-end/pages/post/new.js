@@ -68,7 +68,7 @@ export default function New(props) {
     }
   }
 
-  // 이미지 추가ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ
+  // 이미지 추가
   const handleOnChange = (e) =>{
     const tmpFiles = Array.from(e.target.files)
     setImages([...images, ...tmpFiles])
