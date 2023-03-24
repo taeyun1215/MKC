@@ -30,4 +30,7 @@
 ### ERD
 <img width="791" alt="image" src="https://user-images.githubusercontent.com/65766105/202895088-45a6350c-4c46-4ff7-9762-4e406177915f.png">
 
+### 화면 설계
+
 ### 개발 회고
+
