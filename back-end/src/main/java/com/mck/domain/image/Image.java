@@ -29,7 +29,7 @@ public class Image {
             length = 500,
             nullable = false
     )
-    private String imageName; // 실제로 로컬에 저장할 이미지 파일명
+    private String imageName; // 실제로 서버에 저장할 이미지 파일명
 
     @Column(
             length = 500,
@@ -42,6 +42,6 @@ public class Image {
             fetch = FetchType.LAZY
     ) // 실제로 요청하는 순간 가져오기 위해 LAZY로 사용함.
     @JsonManagedReference // 순환참조 방지
-    private Post post;
+    public Post post;
 
 }
