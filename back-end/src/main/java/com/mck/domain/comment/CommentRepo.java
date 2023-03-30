@@ -22,7 +22,7 @@ public interface CommentRepo extends JpaRepository<Comment, Long> {
 
     // 댓글 수정
     @Modifying(clearAutomatically = true)
-    @Query(value = "UPDATE Comment c SET c.content = :content WHERE c.id = :id", nativeQuery = true)
+    @Query(value = "UPDATE comment c SET c.content = :content WHERE c.id = :id", nativeQuery = true)
     void editComment(@Param("content") String content, @Param("id") Long id);
 
 }

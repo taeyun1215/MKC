@@ -1,25 +1,30 @@
 package com.mck.domain.post;
 
 import com.mck.domain.image.Image;
+import com.mck.domain.image.ImageRepo;
 import com.mck.domain.image.ImageService;
+import com.mck.domain.post.repo.PostRepo;
+import com.mck.domain.post.request.PostDto;
 import com.mck.domain.postlike.PostLike;
 import com.mck.domain.postlike.PostLikeRepo;
 import com.mck.domain.user.User;
 import com.mck.domain.user.UserRepo;
 import com.mck.global.error.BusinessException;
 import com.mck.global.error.ErrorCode;
+import com.mck.infra.image.AwsS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -30,13 +35,22 @@ public class PostServiceImpl implements PostService {
     private final PostRepo postRepo;
     private final UserRepo userRepo;
     private final PostLikeRepo postLikeRepo;
+    private final ImageRepo imageRepo;
 
     private final ImageService imageService;
+    private final AwsS3Service awsS3Service;
 
     @Override
     @Transactional
     public Page<Post> pagePostList(Pageable pageable) {
         return postRepo.findAll(pageable);
+    }
+
+    @Override
+    @Transactional
+    public Post viewDetailPost(Long postId) {
+        return postRepo.findById(postId).get();
+
     }
 
     @Override
@@ -54,17 +68,18 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public Post savePost(PostDto postDto, String username) throws IOException {
-        User findUser = userRepo.findByUsername(username);
+    public Post savePost(PostDto postDto, User user) throws IOException {
+        User findUser = userRepo.findById(user.getId()) // 스프링으로 로그인한 회원을 가져오지만 한번 더 DB에 있는지 조회함.
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
         Post post = postDto.toEntity(findUser);
         Post savePost = postRepo.save(post);
         log.info("새로운 게시글 정보를 DB에 저장했습니다 : ", savePost.getTitle());
 
-        List<Image> saveImageFiles = imageService.saveImages(savePost, postDto.getImageFiles());
-        log.info("새로운 게시글 이미지들을 DB에 저장했습니다 : ", savePost.getTitle());
-
-        savePost.setImages(saveImageFiles);
+        if (postDto.getImageFiles() != null) {
+            List<Image> images = awsS3Service.uploadFile(post, postDto.getImageFiles());
+            savePost.setImages(images);
+        }
 
         return savePost;
     }
@@ -75,14 +90,15 @@ public class PostServiceImpl implements PostService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+
         validateEditPost(postId, findUser); // 유효성 검사
         postRepo.editPost(postDto.getTitle(), postDto.getContent(), postId);
         log.info("게시글 정보를 업데이트 했습니다 : ", postDto.getTitle());
 
-        Optional<Post> findPost = postRepo.findById(postId);
-        List<MultipartFile> imageFiles = postDto.getImageFiles();
+        awsS3Service.updateFile(findPost, findPost.getImages(), postDto);
 
-        imageService.updateImage(imageFiles, findPost.get());
         log.info("게시글에 이미지를 업데이트 했습니다. ");
 
     }
@@ -105,14 +121,20 @@ public class PostServiceImpl implements PostService {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
+        Post findPost = postRepo.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
+
         validateDeletePost(postId, findUser);  // 유효성 검사
-        Optional<Post> findPost = postRepo.findById(postId);
 
-        imageService.deleteImage(findPost.get());
-        log.info("로컬에 이미지를 삭제했습니다 : ", findPost.get().getImages());
+        List<Image> images = findPost.getImages();
+        images.forEach( image -> {
+            awsS3Service.deleteFile(image.getImageName());
+        });
 
-        postRepo.delete(findPost.get());
-        log.info("게시글을 삭제하였습니다 : ", findPost.get().getTitle());
+        log.info("로컬에 이미지를 삭제했습니다 : ", findPost.getImages());
+
+        postRepo.delete(findPost);
+        log.info("게시글을 삭제하였습니다 : ", findPost.getTitle());
 
     }
 
@@ -130,7 +152,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void likePost(Long postId, User user) {
+    public String likePost(Long postId, User user) {
         User findUser = userRepo.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_EXISTING_ACCOUNT.getMessage()));
 
@@ -138,13 +160,13 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
         Optional<PostLike> findPostLike = postLikeRepo.findByPostAndUser(findPost, findUser);
+        AtomicReference<String> returnObject = new AtomicReference<>();
 
         findPostLike.ifPresentOrElse(
-                // 존재한다면 좋아요를 취소하기 위해 삭제.
                 postLike -> {
                     postLikeRepo.delete(postLike);
+                    returnObject.set("좋아요가 삭제되었습니다.");
                 },
-                // 없다면 좋아요를 누르기 위해 저장.
                 () -> {
                     PostLike savePostLike = PostLike.builder()
                             .post(findPost)
@@ -152,20 +174,33 @@ public class PostServiceImpl implements PostService {
                             .build();
 
                     postLikeRepo.save(savePostLike);
+                    returnObject.set("좋아요가 추가되었습니다.");
                 }
         );
+
+        return returnObject.get();
     }
 
     @Override
     @Transactional
-    public Post updateViewPost(Long postId) {
+    public void updateViewPost(Long postId) {
         Post findPost = postRepo.findById(postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_EXIST_POST));
 
         postRepo.updateView(findPost.getId());
         log.info("게시글을 조회했습니다.");
-        return findPost;
     }
 
+    @Override
+    @Transactional
+    public List<Post> popularPost() {
+        return postRepo.popularPost();
+    }
+
+    @Override
+    @Transactional
+    public List<Post> myPost(String username) {
+        return postRepo.myPost(username);
+    }
 
 }

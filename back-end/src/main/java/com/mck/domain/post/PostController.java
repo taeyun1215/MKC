@@ -1,15 +1,17 @@
 package com.mck.domain.post;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mck.domain.comment.Comment;
+import com.mck.domain.comment.CommentService;
+import com.mck.domain.comment.response.CommentPostDetailViewResponse;
+import com.mck.domain.image.response.ImagePostDetailViewResponse;
+import com.mck.domain.post.request.PostDto;
+import com.mck.domain.post.response.PostMyWriteResponse;
+import com.mck.domain.post.response.PostPagingResponse;
+import com.mck.domain.post.response.PostDetailViewResponse;
+import com.mck.domain.post.response.PostPopularResponse;
 import com.mck.domain.user.User;
-import com.mck.domain.user.UserRepo;
 import com.mck.domain.user.UserService;
-import com.mck.global.error.ErrorCode;
-import com.mck.global.service.UserDetailsImpl;
+import com.mck.global.utils.ErrorObject;
 import com.mck.global.utils.ReturnObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,20 +24,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import static com.mck.global.utils.CommonUtil.getUsernameFromToken;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,66 +38,100 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class PostController {
 
     private final PostService postService;
-
-    private final UserRepo userRepo; // 삭제 예정.
+    private final UserService userService;
+    private final CommentService commentService;
 
     // Paging 게시글, 10개씩.
     @GetMapping("/all")
     public ResponseEntity<ReturnObject> pagingPost(
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
+        ReturnObject returnObject;
+
         Page<Post> posts = postService.pagePostList(pageable);
+        PostPagingResponse response = PostPagingResponse.from(posts);
+        returnObject = ReturnObject.builder().success(true).data(response).build();
 
-        ReturnObject object = ReturnObject.builder()
-                .msg("ok")
-                .data(posts)
-                .build();
+        return ResponseEntity.ok().body(returnObject);
+    }
 
-        return ResponseEntity.ok().body(object);
+    @GetMapping("/allCount")
+    public ResponseEntity<ReturnObject> allCountPost() {
+        ReturnObject returnObject;
+
+        List<Post> posts = postService.getPostAll();
+        returnObject = ReturnObject.builder().success(true).data(posts.size()).build();
+
+        return ResponseEntity.ok().body(returnObject);
     }
 
     // 게시글 검색
-    @PostMapping("search/{keyword}")
+    @PostMapping("search/")
     public ResponseEntity<ReturnObject> searchPost(
-            @PathVariable("keyword") String keyword,
+            @RequestParam("keyword") String keyword,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
+        ReturnObject returnObject;
+
         Page<Post> posts = postService.searchPost(keyword, pageable);
+        PostPagingResponse response = PostPagingResponse.from(posts);
+        returnObject = ReturnObject.builder().success(true).data(response).build();
 
-        ReturnObject object = ReturnObject.builder()
-                .msg("ok")
-                .data(posts)
-                .build();
-
-        return ResponseEntity.ok().body(object);
+        return ResponseEntity.ok().body(returnObject);
     }
 
-    // 게시글 상세 정보 todo : 쿠키나 세션을 이용하여 조회수 중복 카운터를 방지하기
+    // 게시글 상세 정보
     @GetMapping("/read/{post_id}")
     public ResponseEntity<ReturnObject> readPost(
             @PathVariable("post_id") Long postId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-
+            @AuthenticationPrincipal String username,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
     ) {
-        User user = userDetails.getUser();
-        Post post = postService.updateViewPost(postId);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
-        // 자기가 쓴 게시물을 자기가 본다면 수정, 삭제를 할 수 있게 해주는 부분.
-        if (post.getUser().getId().equals(user.getId())) {
-            ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
-                    .data(post) // todo : writer = true 로 두고 싶음.
-                    .build();
-
-            return ResponseEntity.ok().body(object);
+        Cookie oldCookie = null;
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
         }
 
-        ReturnObject object = ReturnObject.builder()
-                .msg("ok")
-                .data(post)
-                .build();
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + postId.toString() + "]")) {
+                postService.updateViewPost(postId);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                httpServletResponse.addCookie(oldCookie);
+            }
+        } else {
+            postService.updateViewPost(postId);
+            Cookie newCookie = new Cookie("postView","[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            httpServletResponse.addCookie(newCookie);
+        }
 
-        return ResponseEntity.ok().body(object);
+        User user = userService.getUser(username);
+        Post post = postService.viewDetailPost(postId);
+        List<Comment> comments = commentService.getComments(postId);
+
+        // images response dto
+        List<ImagePostDetailViewResponse> imagePostDetailViewResponse = ImagePostDetailViewResponse.from(post.getImages());
+
+        // comment response dto
+        List<CommentPostDetailViewResponse> commentPostDetailViewResponses = CommentPostDetailViewResponse.form(comments);
+
+        // post response dto
+        PostDetailViewResponse response = PostDetailViewResponse.from(post, imagePostDetailViewResponse, commentPostDetailViewResponses, user.getUsername());
+
+        returnObject = ReturnObject.builder().success(true).data(response).build();
+        return ResponseEntity.ok().body(returnObject);
     }
 
     // 게시글 추가
@@ -111,31 +139,24 @@ public class PostController {
     public ResponseEntity<ReturnObject> savePost(
             @Validated @ModelAttribute("postDto") PostDto postDto,
             BindingResult bindingResult,
-            HttpServletRequest request,
-            HttpServletResponse response
+            @AuthenticationPrincipal String username
     ) throws IOException {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/post/save").toUriString());
 
-        String username = getUsernameFromToken(request);
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
         if (bindingResult.hasErrors()) {
-            ReturnObject object = ReturnObject.builder()
-                    .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
-                    .type(bindingResult.getFieldError().getCode())
-                    .build();
+            errorObject = ErrorObject.builder().code(bindingResult.getFieldError().getCode()).message(bindingResult.getFieldError().getDefaultMessage()).build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
 
-            return ResponseEntity.badRequest().body(object);
+            return ResponseEntity.ok().body(returnObject);
         } else {
-            Post post = postService.savePost(postDto, username);
+            User user = userService.getUser(username);
+            postService.savePost(postDto, user);
+            returnObject = ReturnObject.builder().success(true).data("게시글 등록이 완료되었습니다.").build();
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
-                    .data(post)
-                    .build();
-
-            return ResponseEntity.created(uri).body(object);
+            return ResponseEntity.ok().body(returnObject);
         }
-
     }
 
     // 게시글 수정
@@ -143,73 +164,91 @@ public class PostController {
     public ResponseEntity<ReturnObject> editPost(
             @PathVariable("post_id") Long postId,
             @Validated @ModelAttribute("postDto") PostDto postDto,
-            BindingResult bindingResult
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
+            BindingResult bindingResult,
+            @AuthenticationPrincipal String username
     ) throws IOException {
-//        User user = userDetails.getUser();
 
-        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
-        User user = userOptional.get(); // 삭제 예정.
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
         if (bindingResult.hasErrors()) {
-            ReturnObject object = ReturnObject.builder()
-                    .msg(ErrorCode.MISMATCHED_FORMAT.getMessage())
-                    .type(bindingResult.getFieldError().getCode())
-                    .build();
+            errorObject = ErrorObject.builder().code(bindingResult.getFieldError().getCode()).message(bindingResult.getFieldError().getDefaultMessage()).build();
+            returnObject = ReturnObject.builder().success(false).error(errorObject).build();
 
-            return ResponseEntity.badRequest().body(object);
+            return ResponseEntity.ok().body(returnObject);
         } else {
+            User user = userService.getUser(username);
             postService.editPost(postId, postDto, user);
+            returnObject = ReturnObject.builder().success(true).data("수정이 완료되었습니다.").build();
 
-            ReturnObject object = ReturnObject.builder()
-                    .msg("ok")
-                    .build();
-
-            return ResponseEntity.ok().body(object);
+            return ResponseEntity.ok().body(returnObject);
         }
     }
 
     // 게시글 삭제
     @DeleteMapping("/delete/{post_id}")
     public ResponseEntity<ReturnObject> deletePost(
-//            @PathVariable("post_id") Long postId,
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @PathVariable("post_id") Long postId,
+            @AuthenticationPrincipal String username
     ) throws IOException {
-//        User user = userDetails.getUser();
 
-        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
-        User user = userOptional.get(); // 삭제 예정.
-        Long postId = 1L; // 삭제 예정.
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
+        User user = userService.getUser(username);
         postService.deletePost(postId, user);
+        returnObject = ReturnObject.builder().success(true).data("삭제가 완료되었습니다.").build();
 
-        ReturnObject object = ReturnObject.builder()
-                .msg("ok")
-                .build();
-
-        return ResponseEntity.ok().body(object);
-
+        return ResponseEntity.ok().body(returnObject);
     }
 
     // 게시글 좋아요
-    @PostMapping("like/{post_id}")
+    @GetMapping("like/{post_id}")
     public ResponseEntity<ReturnObject> likePost(
             @PathVariable("post_id") Long postId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal String username
     ) {
 
-//        User user = userDetails.getUser();
+        ReturnObject returnObject;
+        ErrorObject errorObject;
 
-        Optional<User> userOptional = userRepo.findByEmail("taeyun1215@naver.com"); // 삭제 예정.
-        User user = userOptional.get(); // 삭제 예정.
+        User user = userService.getUser(username);
+        String description = postService.likePost(postId, user);
 
-        postService.likePost(postId, user);
+        returnObject = ReturnObject.builder().success(true).data(description).build();
 
-        ReturnObject object = ReturnObject.builder()
-                .msg("ok")
-                .build();
+        return ResponseEntity.ok().body(returnObject);
+    }
 
-        return ResponseEntity.ok().body(object);
+    // 인기 게시글
+    @GetMapping("popular")
+    public ResponseEntity<ReturnObject> popularPost() {
+
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        List<Post> posts = postService.popularPost();
+        List<PostPopularResponse> postPopularResponse = PostPopularResponse.from(posts);
+        returnObject = ReturnObject.builder().success(true).data(postPopularResponse).build();
+
+        return ResponseEntity.ok().body(returnObject);
+    }
+
+    // 내가 쓴 게시글
+    @GetMapping("/myPost")
+    public ResponseEntity<ReturnObject> myPost(
+            @AuthenticationPrincipal String username
+    ) {
+
+        ReturnObject returnObject;
+        ErrorObject errorObject;
+
+        List<Post> posts = postService.myPost(username);
+
+        PostMyWriteResponse postMyWriteResponse = PostMyWriteResponse.from(posts, username);
+        returnObject = ReturnObject.builder().success(true).data(postMyWriteResponse).build();
+
+        return ResponseEntity.ok().body(returnObject);
     }
 
 }

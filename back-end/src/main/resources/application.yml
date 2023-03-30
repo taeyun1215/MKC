@@ -1,38 +1,35 @@
 environments:
   dev:
-    url: http://localhost:8080
+    url: https://www.devyeh.com
   product:
-    url: http://localhost:8080
+    url: https://www.devyeh.com
+
+server:
+  servlet:
+    context-path: /api
 
 spring:
   profiles:
     active: dev
   datasource:
-    url: jdbc:mariadb://localhost:3306/mkc
+    url: jdbc:mariadb://43.201.144.113:3306/mkc
     username: root
-    password: taeyun1215
-
-#spring:
-#  profiles:
-#    active: dev
-#  datasource:
-#    url: jdbc:mariadb://193.123.230.252:3306/mkc
-#    username: root
-#    password: u7q2q8bvRZ7d
+    password: 6548
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ghkwon0130@gmail.com
-    password: zbptllrlqgohvsus
+    username: otaegu1111@gmail.com
+    password: jpbcieugjfypxndw
     properties:
       mail:
         smtp:
@@ -42,13 +39,45 @@ spring:
             enable: true
 
   redis:
+    host: redis
     port: 6379
-    host: 127.0.0.
-    password: 3iZXb4AK5dH5
-    username: root
 
-file:
-  upload:
-    path: C:/Users/tylee/Desktop/image/
-# todo : aws s3 버켓에 추가하기
-# todo : cloudflare 라이브러리 다운 받고 추가하기
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        one-indexed-parameters: true
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA5G5YMWOQTZQHBMFJ
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: yeh-bucket
+    stack:
+      auto: false
+
+#cloud:
+#  aws:
+#    credentials:
+#      access-key: ${{ secrets.AWS_S3_ACCESS_KEY }}
+#      secret-key: ${{ secrets.AWS_S3_SECRET_KEY }}
+#    region:
+#      static: ap-northeast-2
+#    s3:
+#      bucket: ${{ secrets.AWS_S3_BUCKET }}
+#    stack:
+#      auto: false
+
+property:
+  secretKey: pvxmdnogszqqakzssfvvivldk
+  tokenExpiresTime: 60
+  refreshTokenExpiresTime: 120
