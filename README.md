@@ -36,4 +36,32 @@
 ### 화면 설계
 
 ### 개발 회고
+#### AWS EC2
+- https://devty.tistory.com/1
 
+#### Docker AWS EC2 deploy
+- https://devty.tistory.com/2
+
+#### Jenkins CI/CD with Github
+- https://devty.tistory.com/3
+
+#### SpringBoot & Docker & DockerHub & EC2 & GitHub & JenkinsCI/CD
+- https://devty.tistory.com/4
+
+#### AWS EC2 mariadb download
+- https://devty.tistory.com/5
+
+#### AWS Route 53 DNS and EC2 linkage
+- https://devty.tistory.com/6
+
+#### AWS CM, ELB, Nginx use HTTPS server building
+- https://devty.tistory.com/7
+
+#### Github Action CI/CD
+- https://devty.tistory.com/8
+
+#### AWS S3 Bucket
+- https://devty.tistory.com/9
+
+#### Nextjs Springboot Nginx Docker-compose
+- https://devty.tistory.com/10
