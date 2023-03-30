@@ -8,20 +8,23 @@
 
 ### 프로젝트 목표
 - 프론트엔드와 백엔드의 연동 및 협의 중시
-- Junit 프레임워크를 활용하여 코드 신뢰성을 높이고자 단위테스트 작성
+- Docker를 활용한 배포 및 관리의 단순화
 - CI/CD를 적용하고 자동화된 빌드와 배포를 통해 개발의 생산성을 높히기
+- NGINX를 활용한 Reverse Proxy Server
+- 지속적인 확장이 가능한 설계
 - 어떻게 코드를 작성하는 것이 이해하기 쉬운 코드(클린코드)이며 유지보수에 용이한가
-- API 문서 자동화를 위해 Spring Rest Docs 적용
 
 ### 사용 기술 스택
 - Java
 - Spring Boot
+- Spring Data JPA
 - MariaDB
-- React
+- Redis 
 - Next.js
 - Nginx
-- AWS
-- Jenkins
+- AWS(EC2, S3 bucket, Route 53, ACM) 
+- Jenkins(CICD) -> backend
+- Github Action(CICD) -> frontend
 - Docker
 
 ### 아키텍처
