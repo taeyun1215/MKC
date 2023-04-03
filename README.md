@@ -19,7 +19,17 @@
 <img src="https://img.shields.io/badge/v 0.3.1-Post, Comment, Image ERD 구축-red"> <img src="https://img.shields.io/badge/v 0.3.2-게시글 생성-red"> 
 <img src="https://img.shields.io/badge/v 0.3.2-S3 Bucket 생성 및 이미지 업로드 구현-red"> <img src="https://img.shields.io/badge/v 0.3.3-게시글 상세 수정, 삭제, 조회-red"> 
 <img src="https://img.shields.io/badge/v 0.3.4-게시글 좋아요-red"> <img src="https://img.shields.io/badge/v 0.3.6-모든 게시글 조회시 페이징-red"> 
-<img src="https://img.shields.io/badge/v 0.3.5-내가 쓴 게시글 확인-red"> <img src="https://img.shields.io/badge/v 0.3.8-상세 조회시 조회수 중복 제거-red"> 
+<img src="https://img.shields.io/badge/v 0.3.5-내가 쓴 게시글 확인-red"> <img src="https://img.shields.io/badge/v 0.3.8-상세 조회시 조회수 중복 제거-red">
+
+<img src="https://img.shields.io/badge/v 0.4.1-CORS 처리"> <img src="https://img.shields.io/badge/v 0.4.2-API Response틀 수정-red"> 
+<img src="https://img.shields.io/badge/v 0.4.2-여러개의 DTO 생성 및 커스텀-red"> <img src="https://img.shields.io/badge/v 0.4.3-댓글 생성-red"> 
+<img src="https://img.shields.io/badge/v 0.4.4-댓글 수정, 삭제-red"> <img src="https://img.shields.io/badge/v 0.4.6-대댓글 생성-red"> 
+<img src="https://img.shields.io/badge/v 0.4.5-QueryDSL 설정-red">
+
+<img src="https://img.shields.io/badge/v 0.5.1-EC2 생성"> <img src="https://img.shields.io/badge/v 0.5.2-Backend Jenkins CI/CD-red"> 
+<img src="https://img.shields.io/badge/v 0.5.2--red"> <img src="https://img.shields.io/badge/v 0.5.3-댓글 생성-red"> 
+<img src="https://img.shields.io/badge/v 0.5.4-댓글 수정, 삭제-red"> <img src="https://img.shields.io/badge/v 0.5.6-대댓글 생성-red"> 
+<img src="https://img.shields.io/badge/v 0.5.5-QueryDSL 설정-red">
 
 <img src="https://img.shields.io/badge/v 1.0.0-통합 배포-red"> 
 
