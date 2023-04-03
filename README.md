@@ -6,6 +6,23 @@
 ### 서비스 기능
 - 익명성 게시글을 통해 직접 하지 못하는 얘기를 전달
 
+### 버전
+<img src="https://img.shields.io/badge/v 0.1.1-프로젝트 시작-red"> <img src="https://img.shields.io/badge/v 0.1.2-사용 기술 스택 -red"> 
+<img src="https://img.shields.io/badge/v 0.1.3-ERD 설계-red"> <img src="https://img.shields.io/badge/v 0.1.4-Architecture 설계-red"> 
+<img src="https://img.shields.io/badge/v 0.1.5-개발 시작-red"> 
+
+<img src="https://img.shields.io/badge/v 0.2.1-User ERD 구축-red"> <img src="https://img.shields.io/badge/v 0.2.2-회원가입 (JWT)-red"> 
+<img src="https://img.shields.io/badge/v 0.2.3-패키지 구조 변경(도메인)-red"> <img src="https://img.shields.io/badge/v 0.2.3-시프링 시큐리티 설정-red"> 
+<img src="https://img.shields.io/badge/v 0.2.5-이메일 인증-red"> <img src="https://img.shields.io/badge/v 0.2.6-회원 변경-red"> 
+<img src="https://img.shields.io/badge/v 0.2.7-회원 탈퇴-red"> 
+
+<img src="https://img.shields.io/badge/v 0.3.1-Post, Comment, Image ERD 구축-red"> <img src="https://img.shields.io/badge/v 0.3.2-게시글 생성-red"> 
+<img src="https://img.shields.io/badge/v 0.3.2-S3 Bucket 생성 및 이미지 업로드 구현-red"> <img src="https://img.shields.io/badge/v 0.3.3-게시글 상세 수정, 삭제, 조회-red"> 
+<img src="https://img.shields.io/badge/v 0.3.4-게시글 좋아요-red"> <img src="https://img.shields.io/badge/v 0.3.6-모든 게시글 조회시 페이징-red"> 
+<img src="https://img.shields.io/badge/v 0.3.5-내가 쓴 게시글 확인-red"> <img src="https://img.shields.io/badge/v 0.3.8-상세 조회시 조회수 중복 제거-red"> 
+
+<img src="https://img.shields.io/badge/v 1.0.0-통합 배포-red"> 
+
 ### 프로젝트 목표
 - 프론트엔드와 백엔드의 연동 및 협의 중시
 - Docker를 활용한 배포 및 관리의 단순화
