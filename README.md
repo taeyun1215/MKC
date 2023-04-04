@@ -1,5 +1,5 @@
 # GP Blind
-## 통합 배포는 4월 5일입니다. (그 전까지는 테스트 기간입니다.)
+## 통합 배포는 4월 7일입니다. (그 전까지는 테스트 기간입니다.)
 
 ### 서비스 및 프로젝트 소개
 - 익명성 보장을 기반으로 글을 통해 자신의 목소리를 낼수 있는 GP 소셜 네트워크 서비스입니다.
@@ -8,7 +8,7 @@
 - 익명성 게시글을 통해 직접 하지 못하는 얘기를 전달
 
 ### 버전
-<img src="https://img.shields.io/badge/v 1.0.0-통합 배포(4/5)-red"> 
+<img src="https://img.shields.io/badge/v 1.0.0-통합 배포(4/7)-red"> 
 
 <img src="https://img.shields.io/badge/v 0.5.1-EC2 생성-green"> <img src="https://img.shields.io/badge/v 0.5.2-Backend Jenkins CI/CD-green"> 
 <img src="https://img.shields.io/badge/v 0.5.2-Frontend Github Action CI/CD-green"> <img src="https://img.shields.io/badge/v 0.5.3-AWS DNS-green"> 
