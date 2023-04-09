@@ -7,6 +7,9 @@
 ### 서비스 기능
 - 익명성 게시글을 통해 직접 하지 못하는 얘기를 전달
 
+### 운영 링크
+- www.devyeh.com
+
 ### 버전
 <img src="https://img.shields.io/badge/v 1.0.0-통합 배포(4/7)-red"> 
 
